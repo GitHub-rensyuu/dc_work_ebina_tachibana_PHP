@@ -1,28 +1,41 @@
 <?php
+  // データベース接続情報
   $host = 'localhost';
   $login_user = 'xb513874_h8646';
   $password = '1r86160zfh';
   $database = 'xb513874_g1gw7';
+ 
+  // データベースへ接続、文字コード設定
+  $db = new mysqli($host, $login_user, $password, $database);
+  if ($db->connect_error) {
+      die($db->connect_error);
+  }
+  $db->set_charset("utf8");
+  
   $title = '';
-  $lines = array();
-  $file = 'data.txt';
   $error = '';
   $message = '';
+  $posts = [];
 
+  // 削除ボタンを押したときに、imageテーブルの全データ削除
   if (isset($_POST['delete'])) {
-    file_put_contents($file, '');
+      $sql = "DELETE FROM image";
 
-    foreach (glob('img/*') as $image) {
-      if (is_file($image)) {
-          unlink($image);
+      if (!$db->query($sql)) {
+          $error = "削除エラー：" . $db->error;
       }
-    }
+
+      foreach (glob('img/*') as $image) {
+          if (is_file($image)) {
+              unlink($image);
+          }
+      }
+      $message = "全削除しました。";
   }
 
+
   // タイトル・書き込み内容のチェック
-  if (
-      !empty($_POST['title'])
-  ) {
+  if (!empty($_POST['title'])&& !isset($_POST['delete']) && !isset($_POST['change_public'])) {
       // 画像チェック
       if (
           !isset($_FILES['upload_image']) ||
@@ -32,39 +45,71 @@
       } else {
         // jpg・pngのみ許可
         $type = mime_content_type($_FILES['upload_image']['tmp_name']);
-
         if (!in_array($type, ['image/jpeg', 'image/png'])) {
             $error = 'ファイルの形式が正しくありません（jpgまたはpng形式の画像のみアップロードできます。）';
         } else {
-              $title = htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8');
-              $filename = basename($_FILES['upload_image']['name']);
-              $save = 'img/' . $filename;
+          $title = $_POST['title'];
+          $filename = basename($_FILES['upload_image']['name']);
+          $extension = pathinfo($filename, PATHINFO_EXTENSION);
+          $new_filename = uniqid() . '.' . $extension;
+          $save = 'img/' . $new_filename;
 
-              if (!is_dir('img')) {
-                  mkdir('img', 0777, true);
-              }
-              if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $save)) {
-                  file_put_contents(
-                      $file,
-                      $title . '：' . $filename . PHP_EOL,
-                      FILE_APPEND | LOCK_EX
-                  );
+          if (!is_dir('img')) {
+              mkdir('img', 0777, true);
+          }
+          if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $save)) {
+            $sql = "INSERT INTO image(title, file_name) VALUES(?, ?)";
+            $stmt = $db->prepare($sql);
+
+            if (!$stmt) {
+              // SQL準備失敗
+              unlink($save);
+              $error = $db->error;
+
+            } else {
+              $stmt->bind_param("ss", $title, $new_filename);
+              if ($stmt->execute()) {
                   $message = 'アップロード成功しました。';
               } else {
-                  $error = 'アップロード失敗しました。';
+                  // DB登録失敗した場合、保存した画像を削除
+                  unlink($save);
+                  $error = $stmt->error;
               }
+            }
+
+          } else {
+            $error = 'アップロード失敗しました。';
+          }
         }
       }
-    } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-      $error = '入力情報が不足しています';
+  } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete']) && !isset($_POST['change_public'])) {
+    $error = '入力情報が不足しています';
   }
+  
+if(isset($_POST['change_public'])){
+    if(
+    isset($_POST['image_id']) && isset($_POST['public_flg'])
+    ){
+      $image_id = $_POST['image_id'];
+      $public_flg = $_POST['public_flg'];
+    }
 
-          
-  // ファイルが存在すれば読み込む
-  if (file_exists($file)) {
-      // 新しく追加したものが最初に来るようにする
-      $lines = file($file, FILE_IGNORE_NEW_LINES);
-  }
+    $new_flg = ($public_flg == 1) ? 0 : 1;
+
+    $sql = "UPDATE image SET public_flg=? WHERE image_id=?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param("ii", $new_flg, $image_id);
+    $stmt->execute();
+
+    if ($new_flg == 1) {
+      $message = "公開しました。";
+    } else {
+      $message = "非公開にしました。";
+    }
+}
+
+  $result = $db->query("SELECT * FROM image ORDER BY image_id DESC");
+  $posts = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -106,26 +151,40 @@
   <h2>投稿された画像</h2>
 
   <ul style="display:flex; flex-wrap:wrap; gap:30px; padding:0;">
-    <?php foreach ($lines as $line): ?>
-    <?php
-        $data = explode('：', $line);
-    ?>
-    <li style="padding:30px 10px 10px; display:flex; flex-direction:column; align-items:center; list-style:none; border:1px solid #bbb;">
+    <?php foreach ($posts as $post): ?>
+
+    <li style="padding:30px 10px 10px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      list-style:none;
+      border:1px solid #bbb;
+      background-color: <?= $post['public_flg'] == 0 ? '#ddd' : '#fff' ?>;
+    ">
         <span>
-            <?php echo htmlspecialchars($data[0], ENT_QUOTES, 'UTF-8'); ?>
+            <?php echo htmlspecialchars($post['title'], ENT_QUOTES, 'UTF-8'); ?>
         </span>
 
-        <?php if (isset($data[1])): ?>
-            <img
-                src="img/<?php echo htmlspecialchars(trim($data[1]), ENT_QUOTES, 'UTF-8'); ?>"
-                width="200"
-                height="200"
-                alt="投稿画像"
-                style="margin-top:10px;"
-            >
-        <?php endif; ?>
-    </li>
+        <img
+            src="img/<?php echo htmlspecialchars($post['file_name'], ENT_QUOTES, 'UTF-8'); ?>"
+            width="200"
+            height="200"
+            style="margin-top:10px;"
+            alt="投稿画像"
+        >
 
+        <form method="post">
+            <input type="hidden" name="image_id" value="<?= $post['image_id'] ?>">
+            <input type="hidden" name="public_flg" value="<?= $post['public_flg'] ?>">
+
+            <?php if($post['public_flg'] == 1): ?>
+                <input type="submit" name="change_public" value="非表示にする">
+            <?php else: ?>
+                <input type="submit" name="change_public" value="表示する">
+            <?php endif; ?>
+        </form>
+
+    </li>
     <?php endforeach; ?>
   </ul>
 </body>
