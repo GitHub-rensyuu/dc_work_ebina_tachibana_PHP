@@ -12,6 +12,7 @@
   }
   $db->set_charset("utf8");
   
+  // 投稿タイトル、エラーメッセージ、成功メッセージ、投稿一覧の変数を設定
   $title = '';
   $error = '';
   $message = '';
@@ -25,6 +26,7 @@
           $error = "削除エラー：" . $db->error;
       }
 
+      // imgフォルダ内の全ファイルを削除
       foreach (glob('img/*') as $image) {
           if (is_file($image)) {
               unlink($image);
@@ -41,7 +43,7 @@
           !isset($_FILES['upload_image']) ||
           $_FILES['upload_image']['error'] !== UPLOAD_ERR_OK
       ) {
-          $error = 'ファイルの形式が正しくありません（30KB以下のファイルのみを受け付けています。）';
+          $error = '画像ファイルを選択してください。';
       } else {
         // jpg・pngのみ許可
         $type = mime_content_type($_FILES['upload_image']['tmp_name']);
@@ -51,18 +53,22 @@
           $title = $_POST['title'];
           $filename = basename($_FILES['upload_image']['name']);
           $extension = pathinfo($filename, PATHINFO_EXTENSION);
+          // 画像ファイルをユニークな名前に変換し、重複しないようにする
           $new_filename = uniqid() . '.' . $extension;
           $save = 'img/' . $new_filename;
 
+          // imgフォルダが無ければ作成する
           if (!is_dir('img')) {
               mkdir('img', 0777, true);
           }
+
+          // 画像ファイルを一時フォルダからimgフォルダに移動する
           if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $save)) {
             $sql = "INSERT INTO image(title, file_name) VALUES(?, ?)";
             $stmt = $db->prepare($sql);
 
+            // SQL文が正しいか確認
             if (!$stmt) {
-              // SQL準備失敗
               unlink($save);
               $error = $db->error;
 
@@ -71,7 +77,7 @@
               if ($stmt->execute()) {
                   $message = 'アップロード成功しました。';
               } else {
-                  // DB登録失敗した場合、保存した画像を削除
+                  // INSERT処理に失敗した場合、保存した画像を削除
                   unlink($save);
                   $error = $stmt->error;
               }
@@ -87,9 +93,7 @@
   }
   
 if(isset($_POST['change_public'])){
-    if(
-    isset($_POST['image_id']) && isset($_POST['public_flg'])
-    ){
+    if(isset($_POST['image_id']) && isset($_POST['public_flg'])){
       $image_id = $_POST['image_id'];
       $public_flg = $_POST['public_flg'];
     }
@@ -101,6 +105,7 @@ if(isset($_POST['change_public'])){
     $stmt->bind_param("ii", $new_flg, $image_id);
     $stmt->execute();
 
+    // 公開・非公開切り替え時にメッセージ表示
     if ($new_flg == 1) {
       $message = "公開しました。";
     } else {
@@ -108,7 +113,8 @@ if(isset($_POST['change_public'])){
     }
 }
 
-  $result = $db->query("SELECT * FROM image ORDER BY image_id DESC");
+  // imageの画像を表示
+  $result = $db->query("SELECT * FROM image ORDER BY image_id ASC");
   $posts = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
