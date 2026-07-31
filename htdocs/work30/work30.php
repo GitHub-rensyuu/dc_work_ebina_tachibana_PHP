@@ -18,8 +18,8 @@
   $message = '';
   $posts = [];
 
-  // 削除ボタンを押したときに、imageテーブルの全データ削除
-  if (isset($_POST['delete'])) {
+  // 全削除ボタンを押したときに、imageテーブルの全データ削除
+  if (isset($_POST['deleteAll'])) {
       $sql = "DELETE FROM image";
 
       if (!$db->query($sql)) {
@@ -35,9 +35,46 @@
       $message = "全削除しました。";
   }
 
+  // 削除ボタンを押したときに、imageテーブルのデータ削除
+// 個別削除
+  if (isset($_POST['delete'])) {
+
+      $image_id = (int)$_POST['image_id'];
+
+      // 削除する画像名を取得
+      $sql = "SELECT file_name FROM image WHERE image_id = ?";
+      $stmt = $db->prepare($sql);
+      $stmt->bind_param("i", $image_id);
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+      $image = $result->fetch_assoc();
+
+      if ($image) {
+          $sql = "DELETE FROM image WHERE image_id = ?";
+          $stmt = $db->prepare($sql);
+          $stmt->bind_param("i", $image_id);
+
+          if ($stmt->execute()) {
+              // imgフォルダから削除
+              $path = "img/" . $image['file_name'];
+
+              if (file_exists($path)) {
+                  unlink($path);
+              }
+              $message = "画像を削除しました。";
+          } else {
+              $error = "削除に失敗しました。";
+          }
+
+      } else {
+          $error = "画像が見つかりません。";
+      }
+  }
+
 
   // タイトル・書き込み内容のチェック
-  if (!empty($_POST['title'])&& !isset($_POST['delete']) && !isset($_POST['change_public'])) {
+  if (!empty($_POST['title'])&& !isset($_POST['deleteAll']) && !isset($_POST['change_public']) && !isset($_POST['delete'])) {
       // 画像チェック
       if (
           !isset($_FILES['upload_image']) ||
@@ -88,30 +125,30 @@
           }
         }
       }
-  } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['delete']) && !isset($_POST['change_public'])) {
+  } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['deleteAll']) && !isset($_POST['change_public']) && !isset($_POST['delete'])) {
     $error = '入力情報が不足しています';
   }
   
-if(isset($_POST['change_public'])){
-    if(isset($_POST['image_id']) && isset($_POST['public_flg'])){
-      $image_id = $_POST['image_id'];
-      $public_flg = $_POST['public_flg'];
-    }
+// 公開・非公開切り替え
+  if(isset($_POST['change_public'])){
+      if(isset($_POST['image_id']) && isset($_POST['public_flg'])){
+        $image_id = $_POST['image_id'];
+        $public_flg = $_POST['public_flg'];
+      }
 
-    $new_flg = ($public_flg == 1) ? 0 : 1;
+      $new_flg = ($public_flg == 1) ? 0 : 1;
 
-    $sql = "UPDATE image SET public_flg=? WHERE image_id=?";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param("ii", $new_flg, $image_id);
-    $stmt->execute();
+      $sql = "UPDATE image SET public_flg=? WHERE image_id=?";
+      $stmt = $db->prepare($sql);
+      $stmt->bind_param("ii", $new_flg, $image_id);
+      $stmt->execute();
 
-    // 公開・非公開切り替え時にメッセージ表示
-    if ($new_flg == 1) {
-      $message = "公開しました。";
-    } else {
-      $message = "非公開にしました。";
-    }
-}
+      if ($new_flg == 1) {
+        $message = "公開しました。";
+      } else {
+        $message = "非公開にしました。";
+      }
+  }
 
   // imageの画像を表示
   $result = $db->query("SELECT * FROM image ORDER BY image_id ASC");
@@ -128,17 +165,17 @@ if(isset($_POST['change_public'])){
   <h1>画像投稿</h1>
 
   <!-- 投稿成否判定メッセージ -->
-  <?php if (!empty($error)): ?>
-    <p style="color:red;">
-        <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
-    </p>
-  <?php endif; ?>
-
-  <?php if (!empty($message)): ?>
-    <p style="color:blue;">
-        <?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
-    </p>
-  <?php endif; ?>
+  <div style="min-height:24px;">
+    <?php if (!empty($error)): ?>
+      <p style="color:red; margin:0;">
+        <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+      </p>
+    <?php elseif (!empty($message)): ?>
+      <p style="color:blue; margin:0;">
+        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>
+      </p>
+    <?php endif; ?>
+  </div>
 
   <form method="post" enctype="multipart/form-data">
     画像タイトル:<input type="text" name="title"><br>
@@ -147,7 +184,7 @@ if(isset($_POST['change_public'])){
   </form>
 
   <form method="post">
-    <input type="submit" name="delete" value="投稿を全削除">
+    <input type="submit" name="deleteAll" value="投稿を全削除">
   </form>
 
   <a href="work30_gallery.php">画像一覧ページへ</a>
@@ -189,6 +226,11 @@ if(isset($_POST['change_public'])){
                 <input type="submit" name="change_public" value="表示する">
             <?php endif; ?>
         </form>
+
+        <form method="post">
+          <input type="hidden" name="image_id" value="<?= $post['image_id'] ?>">
+          <input type="submit" name="delete" value="削除" onclick="return confirm('この画像を削除しますか？');">
+      </form>
 
     </li>
     <?php endforeach; ?>
