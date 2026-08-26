@@ -7,15 +7,26 @@
 <body>
   <h1>画像投稿</h1>
 
-  <!-- 投稿成否判定メッセージ -->
-  <div style="min-height:24px;">
-    <?php show_message($error, $message); ?>
-  </div>
+<!-- 投稿成否判定メッセージ -->
+<div style="height:24px;">
+  <?php if (!empty($error)): ?>
+    <p style="color:red; margin:0;">
+        <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+    </p>
+  <?php elseif (!empty($message)): ?>
+    <p style="color:blue; margin:0;">
+        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
+    </p>
+  <?php endif; ?>
+</div>
+
+
+
 
   <form method="post" enctype="multipart/form-data">
     画像タイトル:<input type="text" name="title"><br>
     画像:<input type="file" name="upload_image" accept="image/jpeg,image/png"><br>
-    <input type="submit" value="画像投稿">
+    <input type="submit" name="upload" value="画像投稿">
   </form>
 
   <form method="post">
