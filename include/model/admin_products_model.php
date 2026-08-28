@@ -183,6 +183,111 @@
         : '非公開にしました。';
   }
 
+   // 在庫数変更
+  function update_stock($db, $product_id, $stock_qty){
+
+    // 商品が存在するか確認
+    $stmt = $db->prepare(
+        "SELECT product_id
+         FROM ec_product
+         WHERE product_id = ?"
+    );
+
+    $stmt->execute([$product_id]);
+
+    if (!$stmt->fetch()) {
+        return '商品が見つかりません。';
+    }
+
+    // 在庫数を変更
+    $stmt = $db->prepare(
+        "UPDATE ec_stock
+         SET stock_qty = ?, update_date = NOW()
+         WHERE product_id = ?"
+    );
+
+    $stmt->execute([
+        $stock_qty,
+        $product_id
+    ]);
+
+    return '在庫数を変更しました。';
+  }
+
+  // 商品削除
+  function delete_product($db, $product_id){
+
+    // 商品に紐づく画像ファイル名を取得
+    $stmt = $db->prepare(
+        "SELECT image_name
+         FROM ec_image
+         WHERE product_id = ?"
+    );
+
+    $stmt->execute([$product_id]);
+
+    $image = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $db->beginTransaction();
+
+    try {
+
+        // ① 画像テーブルから削除
+        $stmt = $db->prepare(
+            "DELETE FROM ec_image
+             WHERE product_id = ?"
+        );
+
+        if (!$stmt->execute([$product_id])) {
+            throw new Exception('画像情報の削除に失敗しました。');
+        }
+
+        // ② 在庫テーブルから削除
+        $stmt = $db->prepare(
+            "DELETE FROM ec_stock
+             WHERE product_id = ?"
+        );
+
+        if (!$stmt->execute([$product_id])) {
+            throw new Exception('在庫情報の削除に失敗しました。');
+        }
+
+        // ③ 商品テーブルから削除
+        $stmt = $db->prepare(
+            "DELETE FROM ec_product
+             WHERE product_id = ?"
+        );
+
+        if (!$stmt->execute([$product_id])) {
+            throw new Exception('商品情報の削除に失敗しました。');
+        }
+
+        // DBの削除が成功
+        $db->commit();
+
+        // ④ 画像ファイルを削除
+        if ($image && !empty($image['image_name'])) {
+
+            $image_path = 'img/' . $image['image_name'];
+
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
+        }
+
+        return '商品を削除しました。';
+
+    } catch (Throwable $e) {
+
+        // DBをロールバック
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+
+        return $e->getMessage();
+    }
+  }
+
   // ec_productの一覧を表示
   function show_products($db){
     $stmt = $db->query("SELECT

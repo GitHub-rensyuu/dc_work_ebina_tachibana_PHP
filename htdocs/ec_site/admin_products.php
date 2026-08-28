@@ -46,6 +46,30 @@ if (
     }
 }
 
+// 在庫数変更
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['change_stock'])) {
+    if (
+        isset($_POST['product_id'])
+        && isset($_POST['stock_qty'])
+    ) {
+        $product_id = (int)$_POST['product_id'];
+        $stock_qty = $_POST['stock_qty'];
+
+        if (
+            $stock_qty === ''
+            || filter_var($stock_qty, FILTER_VALIDATE_INT) === false
+            || $stock_qty < 0
+        ) {
+            $error = '正しい在庫数を入力してください。';
+        } else {
+            $message = update_stock($db,$product_id,(int)$stock_qty);
+        }
+    } else {
+        $error = 'データが不足しています。';
+    }
+}
+
 // 公開・非公開切り替え
 if (isset($_POST['change_public'])) {
 
@@ -57,6 +81,18 @@ if (isset($_POST['change_public'])) {
             $db,
             (int)$_POST['product_id']
         );
+    } else {
+        $error = 'データが不足しています。';
+    }
+}
+
+// 商品削除
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['delete_product'])
+) {
+    if (isset($_POST['product_id'])) {
+        $message = delete_product($db,(int)$_POST['product_id']);
     } else {
         $error = 'データが不足しています。';
     }
