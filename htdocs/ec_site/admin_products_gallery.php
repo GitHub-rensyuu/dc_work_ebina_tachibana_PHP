@@ -1,74 +1,205 @@
 <?php
 
-  $db = connect_database();
-  $posts = show_images($db);
+// Modelを読み込む
+require_once '../../include/model/admin_products_model.php';
 
-  function connect_database(){
-    // データベース接続情報
-    $host = 'localhost';
-    $login_user = 'xb513874_h8646';
-    $password = '1r86160zfh';
-    $database = 'xb513874_g1gw7';
-   
-    // データベースへ接続、文字コード設定
-   try {
-      $db = new PDO(
-          "mysql:host=$host;dbname=$database;charset=utf8",
-          $login_user,
-          $password
-      );
-  
-      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      return $db;
-    } catch (PDOException $e) {
-        die($e->getMessage());
-    }
-  }
+// データベース接続
+$db = connect_database();
 
-  function show_images($db){
-    // 公開中の画像のみ取得
-    $sql = "SELECT title, file_name FROM image WHERE public_flg = 1 ORDER BY image_id ASC";
-    $stmt = $db->query($sql);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  }
+// 商品一覧を取得
+$products = show_products($db);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>work39</title>
-</head>
-<body>
-  <h1>画像一覧</h1>
-  <a href="admin_products.php">画像投稿ページへ</a>
-  <hr style="border:0; border-top:1px solid #bbb; width:100%; margin:20px 0;">
+  <title>ECサイト</title>
 
-  <ul style="display:flex; flex-wrap:wrap; gap:30px; padding:0;">
-    <?php foreach ($posts as $post): ?>
-      <li style="padding:30px 10px 10px;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        list-style:none;
-        border:1px solid #bbb;
-        background-color: #fff;
-      ">
-          <span>
-              <?php echo htmlspecialchars($post['title'], ENT_QUOTES, 'UTF-8'); ?>
-          </span>
+  <style>
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 700px;
+      padding: 0;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      width: 220px;
+      box-sizing: border-box;
+      padding: 2px;
+      list-style: none;
+      border: 1px solid #bbb;
+      background-color: #fff;
+    }
+
+    /* 売り切れ商品のカード */
+    .product-card.sold-out {
+      background-color: #ddd;
+      color: #666;
+    }
+
+    /* 商品画像 */
+    .image-wrapper {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin:5px auto;
+    }
+
+    .image-wrapper img {
+      display: block;
+      width: 200px;
+      height: 200px;
+      object-fit: contain;
+    }
+
+    /* 売り切れ商品の画像を暗くする */
+    .sold-out .image-wrapper img {
+      opacity: 0.45;
+    }
+
+    /* 画像中央の「売り切れ」 */
+    .sold-out-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      width: 180px;
+      padding: 10px 0;
+
+      background-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+
+      border: 2px solid #fff;
+      box-sizing: border-box;
+    }
+
+    /* 商品名・価格・ボタン */
+    .product-info {
+      padding: 5px 3px 8px;
+      text-align: center;
+    }
+
+    .product-name-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+
+    .product-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .price {
+      white-space: nowrap;
+    }
+
+    /* カートに入れるボタン */
+    .cart-button {
+      width: 60%;
+      padding: 3px 0px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>商品一覧</h1>
+
+  <a href="admin_products.php">商品登録ページへ</a>
+  <a href="index.php">ログアウト</a>
+
+  <hr style="border:0; border-top:1px solid #bbb; width:100%; margin:20px 0;">
+  <br>
+
+  <ul class="product-list">
+
+    <?php foreach ($products as $product): ?>
+
+      <?php
+      // 非公開の商品は表示しない
+      if ($product['public_flg'] != 1) {
+          continue;
+      }
+
+      // 在庫数が0なら売り切れ
+      $is_sold_out = ((int)$product['stock_qty'] === 0);
+      ?>
+
+      <li class="product-card <?= $is_sold_out ? 'sold-out' : '' ?>">
+
+        <!-- 商品画像 -->
+        <div class="image-wrapper">
 
           <img
-              src="img/<?php echo htmlspecialchars($post['file_name'], ENT_QUOTES, 'UTF-8'); ?>"
-              width="200"
-              height="200"
-              style="margin-top:10px;"
-              alt="投稿画像"
+            src="img/<?= htmlspecialchars(
+              $product['image_name'],
+              ENT_QUOTES,
+              'UTF-8'
+            ) ?>"
+            width="200"
+            height="200"
+            alt="商品画像"
           >
+
+          <?php if ($is_sold_out): ?>
+            <div class="sold-out-label">
+              売り切れ
+            </div>
+          <?php endif; ?>
+
+        </div>
+
+        <!-- 商品名・価格・カートボタン -->
+        <div class="product-info">
+
+          <div class="product-name-price">
+
+            <span class="product-name">
+              <?= htmlspecialchars(
+                $product['product_name'],
+                ENT_QUOTES,
+                'UTF-8'
+              ) ?>
+            </span>
+
+            <span class="price">
+              <?= htmlspecialchars(
+                $product['price'],
+                ENT_QUOTES,
+                'UTF-8'
+              ) ?>円
+            </span>
+
+          </div>
+
+          <?php if (!$is_sold_out): ?>
+            <button type="button" class="cart-button">
+              カートに入れる
+            </button>
+          <?php endif; ?>
+
+        </div>
+
       </li>
+
     <?php endforeach; ?>
+
   </ul>
+
 </body>
 </html>
-
