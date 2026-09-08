@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ECサイト</title>
+  <title>商品管理ページ</title>
   <style>
     table {
       border: solid black 1px;
@@ -43,6 +43,8 @@
   <h1>商品登録</h1>
 
   <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token"
+     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
     商品名:<input type="text" name="product_name"><br>
     価格:<input type="number" name="price"><br>
     個数:<input type="number" name="stock_qty"><br>
@@ -59,48 +61,50 @@
   </form>
 
   <!-- 商品登録時のメッセージ -->
-  <div style="height:24px;">
-    <?php if (!empty($error) && isset($_POST['register'])): ?>
-      <p style="color:red; margin:0;">
-        <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
-      </p>
-    <?php elseif (!empty($message) && isset($_POST['register'])): ?>
-      <p style="color:blue; margin:0;">
-        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
-      </p>
-    <?php endif; ?>
-  </div>  
+  <?php if ($message_type === 'register'): ?>
 
-  <a href="admin_products_gallery.php">商品一覧ページへ</a>
-  <a href="index.php">ログアウト</a>
+    <div style="height:24px;">
+      <?php if (!empty($error)): ?>
+        <p style="color:red; margin:0;">
+          <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+        </p>
+      <?php elseif (!empty($message)): ?>
+        <p style="color:blue; margin:0;">
+          <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
+        </p>
+      <?php endif; ?>
+    </div>
+
+  <?php endif; ?>
+
+ 
+
+  <a href="products.php">商品一覧ページへ</a>
+  <!-- ログアウト -->
+  <form action="admin_products.php" method="post">
+    <input type="hidden" name="csrf_token"
+      value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+    <input type="submit" name="logout" value="ログアウト">
+  </form>
   <br>
 
   <!-- 商品一覧操作時のメッセージ -->
-  <div style="height:24px;">
-    <?php if (
-      !empty($error)
-      && (
-        isset($_POST['change_public'])
-        || isset($_POST['change_stock'])
-        || isset($_POST['delete_product'])
-      )
-    ): ?>
-      <p style="color:red; margin:0;">
-        <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
-      </p>
-    <?php elseif (
-      !empty($message)
-      && (
-        isset($_POST['change_public'])
-        || isset($_POST['change_stock'])
-        || isset($_POST['delete_product'])
-      )
-    ): ?>
-      <p style="color:blue; margin:0;">
-        <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
-      </p>
-    <?php endif; ?>
-  </div>
+  <?php if ($message_type === 'product'): ?>
+
+    <div style="height:24px;">
+      <?php if (!empty($error)): ?>
+        <p style="color:red; margin:0;">
+          <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+        </p>
+      <?php elseif (!empty($message)): ?>
+        <p style="color:blue; margin:0;">
+          <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
+        </p>
+      <?php endif; ?>
+    </div>
+
+  <?php endif; ?>
+
 
   <hr style="border:0; border-top:1px solid #bbb; width:100%; margin:20px 0;">
   <br>
@@ -138,6 +142,8 @@
 
           <td>
             <form method="post" style="display:flex; align-items:center; gap:5px;">
+              <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="hidden" name="product_id"
                 value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="number" name="stock_qty" value="<?= htmlspecialchars($product['stock_qty'], ENT_QUOTES, 'UTF-8') ?>"
@@ -148,13 +154,11 @@
 
           <td>
             <form method="post">
-              <input type="hidden" name="product_id"
-                value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>"
-              >
 
-              <input type="hidden" name="public_flg"
-                value="<?= htmlspecialchars($product['public_flg'], ENT_QUOTES, 'UTF-8') ?>"
-              >
+              <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="product_id"
+                value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
 
               <?php if ($product['public_flg'] == 1): ?>
                 <input type="submit" name="change_public" value="非表示にする">
@@ -166,6 +170,8 @@
 
           <td>
             <form method="post">
+              <input type="hidden" name="csrf_token"
+              value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="hidden" name="product_id"
               value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="submit" name="delete_product" value="削除する">

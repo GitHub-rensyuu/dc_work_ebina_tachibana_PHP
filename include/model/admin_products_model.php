@@ -1,28 +1,7 @@
 <?php
-  
-  function connect_database(){
-    // データベース接続情報
-    $host = 'localhost';
-    $login_user = 'xb513874_h8646';
-    $password = '1r86160zfh';
-    $database = 'xb513874_g1gw7';
-  
-    // データベースへ接続、文字コード設定
-    try {
-        $db = new PDO(
-            "mysql:host=$host;dbname=$database;charset=utf8",
-            $login_user,
-            $password
-        );
-
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $db;
-    } catch (PDOException $e) {
-        die($e->getMessage());
-    }
-  }
 
   function validate_product_post($product_name,$price,$stock_qty,$public_flg,$file){
+    $product_name = trim($product_name);
     if (empty($product_name)) {
         return '商品名を入力してください。';
     }
@@ -33,7 +12,7 @@
         return '正しい価格を入力してください。';
     }
     if ($stock_qty === '' || filter_var($stock_qty, FILTER_VALIDATE_INT) === false || $stock_qty < 0) {
-        return '個数を入力してください。';
+        return '正しい個数を入力してください。';
     }
 
     if (!in_array((int)$public_flg, [0, 1], true)) {
@@ -113,16 +92,22 @@
             throw new Exception('画像形式が正しくありません。');
         }
 
-        $image_name = uniqid('', true) . '.' . $extension;
-
-        $save = 'img/' . $image_name;
-
+        // 画像保存先
+        $image_dir = __DIR__ . '/../../htdocs/ec_site/img';
         // imgフォルダが無ければ作成	
-        if (!is_dir('img') && !mkdir('img', 0777, true)) {
+        if (!is_dir($image_dir) && !mkdir($image_dir, 0755, true)) {
             throw new Exception('画像保存フォルダの作成に失敗しました。');
         }
+
+        // ファイル名を作成
+        $image_name = uniqid('', true) . '.' . $extension;
+        $image_path = $image_dir . '/' . $image_name;
+
+        // ロールバック時に削除するため保存
+        $save = $image_path;
+
         // 画像を保存	
-        if (!move_uploaded_file($file['tmp_name'], $save)) {	
+        if (!move_uploaded_file($file['tmp_name'], $image_path)) {	
         throw new Exception('画像の保存に失敗しました。');	
         }
 
@@ -267,8 +252,8 @@
 
         // ④ 画像ファイルを削除
         if ($image && !empty($image['image_name'])) {
-
-            $image_path = 'img/' . $image['image_name'];
+            $image_dir = __DIR__ . '/../../htdocs/ec_site/img';
+            $image_path = $image_dir . '/' . $image['image_name'];
 
             if (file_exists($image_path)) {
                 unlink($image_path);
@@ -288,22 +273,4 @@
     }
   }
 
-  // ec_productの一覧を表示
-  function show_products($db){
-    $stmt = $db->query("SELECT
-    p.product_id,
-    p.product_name,
-    p.price,
-    p.public_flg,
-    s.stock_qty,
-    i.image_name
-    FROM ec_product p
-    LEFT JOIN ec_stock s
-        ON p.product_id = s.product_id
-    LEFT JOIN ec_image i
-        ON p.product_id = i.product_id
-    ORDER BY p.product_id ASC");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-  }
-  
 ?>

@@ -34,11 +34,11 @@ $db->set_charset("utf8");
 // ==============================
 // Cookieの保存期間
 // ==============================
-define('EXPIRATION_PERIOD', 30);
+//保存日数
+define('COOKIE_EXPIRATION_DAYS', 30);
 
 $cookie_expiration =
-    time() + EXPIRATION_PERIOD * 60 * 24 * 365;
-
+    time() + COOKIE_EXPIRATION_DAYS * 60 * 60 * 24;
 
 // ==============================
 // ログアウト処理
@@ -57,6 +57,7 @@ if (isset($_POST['logout'])) {
     if (isset($_SESSION['login_id'])) {
         $logout_user_id = $_SESSION['login_id'];
 
+        // セッションのlogin_idをcookieにコピー
         setcookie(
             'user_id',
             $logout_user_id,
@@ -82,16 +83,21 @@ if (isset($_POST['logout'])) {
 
 
     // ------------------------------
-    // セッションCookieを削除
+    // セッションを識別するためのCookieを削除
     // ------------------------------
     if (ini_get("session.use_cookies")) {
 
         $params = session_get_cookie_params();
 
+        // session_name()・path・domainでcookieを一意に特定できる
+        // secureは、HTTPS通信でのみCookieを送信する、
+        // httponlyは、JavaScriptからCookieにアクセスできないかどうかの設定で、
+        // セキュリティのため設定を同じにしておく必要がある。
+
         setcookie(
             session_name(),
             '',
-            time() - 42000,
+            time() - 3600,
             $params["path"],
             $params["domain"],
             $params["secure"],
@@ -135,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cookie_confirmation = '';
     }
 
-
     // ------------------------------
     // ユーザーID
     // ------------------------------
@@ -144,7 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $user_id = '';
     }
-
 
     // ------------------------------
     // パスワード
@@ -198,12 +202,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ------------------------------
     if ($login_success === true) {
 
-        // セッションIDを再生成
+
+        // セッションIDを再生成（セッション固定攻撃への対策のため、
+        // セッションIDをログイン前とログイン後に変える）
         session_regenerate_id(true);
 
         // ログインユーザーIDをセッションに保存
         $_SESSION['login_id'] = $user_id;
-
 
         // ------------------------------
         // Cookie保存
@@ -288,7 +293,9 @@ $user_found = $stmt->fetch();
 $stmt->close();
 
 
-// ユーザーがDBに存在しない場合
+// ユーザーがDBに存在しない場合(DBから削除されたユーザーが、
+// 古いセッションを使ってページを利用し続ける
+// ことを防ぐための処理です。)
 if (!$user_found) {
 
     $_SESSION = [];

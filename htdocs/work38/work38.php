@@ -72,16 +72,8 @@ if (isset($_COOKIE['user_id'])) {
 
     <label for="user_id">ユーザーID：</label>
 
-    <input
-        type="text"
-        id="user_id"
-        name="user_id"
-        value="<?php
-            echo htmlspecialchars(
-                $user_id,
-                ENT_QUOTES,
-                'UTF-8'
-            );
+    <input type="text" id="user_id" name="user_id" value="<?php
+            echo htmlspecialchars($user_id,ENT_QUOTES,'UTF-8');
         ?>"
     >
 
@@ -89,18 +81,11 @@ if (isset($_COOKIE['user_id'])) {
 
     <label for="password">パスワード：</label>
 
-    <input
-        type="password"
-        id="password"
-        name="password"
-    >
+    <input type="password" id="password" name="password">
 
     <br>
 
-    <input
-        type="checkbox"
-        name="cookie_confirmation"
-        value="checked"
+    <input type="checkbox" name="cookie_confirmation" value="checked"
         <?php echo $cookie_confirmation; ?>
     >
 
