@@ -134,6 +134,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     // ==============================
+    // 価格変更
+    // ==============================
+    } elseif (isset($_POST['change_price'])) {
+
+        if (
+            isset($_POST['product_id']) &&
+            isset($_POST['price'])
+        ) {
+
+            $product_id = (int)$_POST['product_id'];
+            $price = $_POST['price'];
+
+            if (
+                $price === '' ||
+                filter_var(
+                    $price,
+                    FILTER_VALIDATE_INT
+                ) === false ||
+                $price < 0
+            ) {
+
+                $_SESSION['admin_product_error'] =
+                    '正しい価格を入力してください。';
+                $_SESSION['admin_product_message_type'] = 'product';
+
+            } else {
+
+                $message = update_price($db,$product_id,(int)$price);
+
+                $_SESSION['admin_product_message'] = $message;
+                $_SESSION['admin_product_message_type'] = 'product';
+            }
+
+        } else {
+
+            $_SESSION['admin_product_error'] = 'データが不足しています。';
+            $_SESSION['admin_product_message_type'] = 'product';
+        }
+
+    // ==============================
     // 公開・非公開
     // ==============================
     } elseif (isset($_POST['change_public'])) {

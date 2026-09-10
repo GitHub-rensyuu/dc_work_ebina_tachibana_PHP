@@ -137,7 +137,28 @@
           </td>
 
           <td>
-            ¥ <?= htmlspecialchars($product['price'], ENT_QUOTES, 'UTF-8') ?>
+            <form method="post" style="display:flex; align-items:center; gap:5px;">
+              <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
+              <input type="hidden" name="product_id"
+                value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
+
+              <span>¥</span>
+
+              <input
+                type="number"
+                name="price"
+                value="<?= htmlspecialchars($product['price'], ENT_QUOTES, 'UTF-8') ?>"
+                min="0"
+              >
+
+              <input
+                type="submit"
+                name="change_price"
+                value="変更する"
+              >
+            </form>
           </td>
 
           <td>

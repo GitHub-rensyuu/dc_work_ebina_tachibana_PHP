@@ -6,9 +6,24 @@
 session_start();
 
 // ==============================
+// CSRFトークン作成
+// ==============================
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// ==============================
 // 共通認証処理を読み込む
 // ==============================
 require_once __DIR__ . '/../../include/common/auth.php';
+
+// ==============================
+// ログイン状態を確認
+// ==============================
+//
+// 未ログインでproducts.phpに直接アクセスした場合
+// index.phpへ移動
+require_login();
 
 // ==============================
 // Model
@@ -22,12 +37,53 @@ require_once __DIR__ . '/../../include/common/database.php';
 $db = connect_database();
 
 // ==============================
-// ログイン状態を確認
+// POST処理
 // ==============================
-//
-// 未ログインでproducts.phpに直接アクセスした場合
-// index.phpへ移動
-require_login();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // ==============================
+    // CSRFトークン確認
+    // ==============================
+    verify_csrf_token();
+
+    // ==============================
+    // カートに追加
+    // ==============================
+    if (isset($_POST['add_cart'])) {
+
+        if (isset($_POST['product_id'])) {
+
+            $product_id = (int)$_POST['product_id'];
+
+            $message = add_cart(
+                $db,
+                $_SESSION['user_id'],
+                $product_id
+            );
+
+            $_SESSION['cart_message'] = $message;
+
+        } else {
+
+            $_SESSION['cart_message'] =
+                'データが不足しています。';
+        }
+    }
+
+    // ==============================
+    // PRG
+    // POST → Redirect → GET
+    // ==============================
+    header('Location: products.php');
+    exit();
+}
+
+// ==============================
+// メッセージ取得
+// ==============================
+$cart_message = $_SESSION['cart_message'] ?? '';
+
+unset($_SESSION['cart_message']);
 
 // ==============================
 // 商品一覧を取得
@@ -145,6 +201,12 @@ $products = show_products($db);
 
   <h1>商品一覧</h1>
 
+  <?php if (!empty($cart_message)): ?>
+    <p style="color:blue;">
+      <?= htmlspecialchars($cart_message,ENT_QUOTES,'UTF-8') ?>
+    </p>
+  <?php endif; ?>
+
   <a href="admin_products.php">商品登録ページへ</a>
 
   <hr style="border:0; border-top:1px solid #bbb; width:100%; margin:20px 0;">
@@ -200,9 +262,28 @@ $products = show_products($db);
           </div>
 
           <?php if (!$is_sold_out): ?>
-            <button type="button" class="cart-button">
-              カートに入れる
-            </button>
+            <form method="post">
+              <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars(
+                  $_SESSION['csrf_token'],
+                  ENT_QUOTES,
+                  'UTF-8'
+                ) ?>"
+              >
+
+              <input type="hidden" name="product_id"
+                 value="<?= htmlspecialchars(
+                  $product['product_id'],
+                  ENT_QUOTES,
+                  'UTF-8'
+                ) ?>"
+              >
+
+              <button type="submit" name="add_cart" class="cart-button">
+                カートに入れる
+              </button>
+
+            </form>
           <?php endif; ?>
 
         </div>
