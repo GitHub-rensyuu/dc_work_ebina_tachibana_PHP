@@ -39,6 +39,21 @@
     }
 
     // ==============================
+    // ユーザー登録成功メッセージを取得
+    // ==============================
+    if (isset($_SESSION['register_success'])) {
+
+        $register_success = $_SESSION['register_success'];
+
+        // 一度表示したら削除
+        unset($_SESSION['register_success']);
+
+    } else {
+
+        $register_success = '';
+    }
+
+    // ==============================
     // CookieからユーザーIDを取得
     // ==============================
     if (isset($_COOKIE['cookie_confirmation'])) {
@@ -83,6 +98,12 @@
         .login-error {
             margin-bottom: 20px;
             color: #d00;
+            font-weight: bold;
+        }
+
+        .register-success {
+            margin-bottom: 20px;
+            color: #080;
             font-weight: bold;
         }
 
@@ -134,6 +155,8 @@
             color: #333;
         }
 
+
+
     </style>
 </head>
 
@@ -146,6 +169,12 @@
         <?php if ($login_error !== ''): ?>
             <div class="login-error">
                 <?= htmlspecialchars($login_error,ENT_QUOTES,'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($register_success !== ''): ?>
+            <div class="register-success">
+                <?= htmlspecialchars($register_success, ENT_QUOTES, 'UTF-8') ?>
             </div>
         <?php endif; ?>
 
