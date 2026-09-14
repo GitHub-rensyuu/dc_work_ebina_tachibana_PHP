@@ -32,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // ==============================
 // POSTデータ取得
 // ==============================
-$login_id = $_POST['login_id'] ?? '';
+$user_name = $_POST['user_name'] ?? '';
 $input_password = $_POST['password'] ?? '';
 $cookie_confirmation = $_POST['cookie_confirmation'] ?? '';
 
 // ==============================
 // 入力チェック
 // ==============================
-if ($login_id === '' || $input_password === '') {
+if ($user_name === '' || $input_password === '') {
 
     $_SESSION['login_error'] = 'ユーザー名とパスワードを入力してください。';
 
@@ -50,7 +50,7 @@ if ($login_id === '' || $input_password === '') {
 // ==============================
 // ログイン確認
 // ==============================
-$user = find_user($db,$login_id,$input_password);
+$user = find_user($db,$user_name,$input_password);
 
 // ==============================
 // ログイン失敗
@@ -72,14 +72,14 @@ session_regenerate_id(true);
 
 // セッション保存
 $_SESSION['user_id'] = $user['user_id'];
-$_SESSION['login_id'] = $login_id;
+$_SESSION['user_name'] = $user_name;
 $_SESSION['admin_flg'] = (int)$user['admin_flg'];
 
 // ==============================
 // Cookie処理
 // ==============================
 if ($cookie_confirmation === 'checked') {
-    save_login_cookie($login_id);
+    save_login_cookie($user_name);
 } else {
     delete_login_cookie();
 }

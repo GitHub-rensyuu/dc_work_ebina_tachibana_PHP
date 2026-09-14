@@ -3,12 +3,12 @@
 // ==============================
 // ユーザー情報を取得
 // ==============================
-function find_user($db, $login_id, $input_password)
+function find_user($db, $user_name, $input_password)
 {
     $sql = '
         SELECT user_id, admin_flg
         FROM ec_user
-        WHERE login_id = ?
+        WHERE user_name = ?
         AND password = ?
     ';
 
@@ -21,7 +21,7 @@ function find_user($db, $login_id, $input_password)
     }
 
     $stmt->execute([
-        $login_id,
+        $user_name,
         $input_password
     ]);
 

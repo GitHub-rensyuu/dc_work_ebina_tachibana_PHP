@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>購入完了</title>
+    <link rel="stylesheet" href="css/header.css">
 
     <style>
         h1 {
@@ -82,6 +83,10 @@
 </head>
 
 <body>
+    <?php	
+        $show_header_menu = true;	
+        require_once __DIR__ . '/../../htdocs/ec_site/header.php';	
+    ?>
 
     <h1>購入ありがとうございました</h1>
 

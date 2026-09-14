@@ -47,10 +47,10 @@
         $cookie_confirmation = '';
     }
 
-    if (isset($_COOKIE['login_id'])) {
-        $login_id = $_COOKIE['login_id'];
+    if (isset($_COOKIE['user_name'])) {
+        $user_name = $_COOKIE['user_name'];
     } else {
-        $login_id = '';
+        $user_name = '';
     }
 
 ?>
@@ -152,9 +152,9 @@
         <form action="login.php" method="post">
 
             <div class="form-row">
-                <label for="login_id">ログインID</label>
-                <input type="text" id="login_id" name="login_id" value="<?php
-                        echo htmlspecialchars($login_id, ENT_QUOTES, 'UTF-8');
+                <label for="user_name">ユーザー名</label>
+                <input type="text" id="user_name" name="user_name" value="<?php
+                        echo htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8');
                     ?>"
                 >
             </div>
@@ -168,7 +168,7 @@
                 <input type="checkbox" name="cookie_confirmation" value="checked"
                     <?php echo $cookie_confirmation; ?>
                 >
-                次回からログインIDの入力を省略する
+                次回からユーザー名の入力を省略する
             </div>
 
             <input type="submit" value="ログイン" class="login-button">
