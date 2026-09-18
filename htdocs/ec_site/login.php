@@ -3,12 +3,17 @@
 // ==============================
 // セッション開始
 // ==============================
-session_start();
+require_once __DIR__ . '/../../include/common/session.php';
 
 // ==============================
 // Model
 // ==============================
 require_once __DIR__ . '/../../include/model/user_model.php';
+
+// ==============================
+// 共通認証処理
+// ==============================
+require_once __DIR__ . '/../../include/common/auth.php';
 
 // ==============================
 // Cookie
@@ -30,11 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // ==============================
+// CSRFチェック
+// ==============================
+verify_csrf_token();
+
+// ==============================
 // POSTデータ取得
 // ==============================
 $user_name = $_POST['user_name'] ?? '';
 $input_password = $_POST['password'] ?? '';
-$cookie_confirmation = $_POST['cookie_confirmation'] ?? '';
+$remember_user_name = $_POST['remember_user_name'] ?? '';
 
 // ==============================
 // 入力チェック
@@ -72,14 +82,14 @@ session_regenerate_id(true);
 
 // セッション保存
 $_SESSION['user_id'] = $user['user_id'];
-$_SESSION['user_name'] = $user_name;
+$_SESSION['user_name'] = $user['user_name'];
 $_SESSION['admin_flg'] = (int)$user['admin_flg'];
 
 // ==============================
 // Cookie処理
 // ==============================
-if ($cookie_confirmation === 'checked') {
-    save_login_cookie($user_name);
+if ($remember_user_name === 'checked') {
+    save_login_cookie($user['user_name']);
 } else {
     delete_login_cookie();
 }

@@ -130,7 +130,8 @@
                 unlink($save);	
             }
 
-            return [	'',	$e->getMessage()];
+            error_log($e->getMessage());
+            return ['', '商品登録に失敗しました。'];
 
         }
     }
@@ -263,7 +264,17 @@
             throw new Exception('在庫情報の削除に失敗しました。');
         }
 
-        // ③ 商品テーブルから削除
+        // ③ カートから削除
+        $stmt = $db->prepare(
+            "DELETE FROM ec_cart
+            WHERE product_id = ?"
+        );
+        if (!$stmt->execute([$product_id])) {
+            throw new Exception('カート情報の削除に失敗しました。');
+        }
+
+
+        // ④ 商品テーブルから削除
         $stmt = $db->prepare(
             "DELETE FROM ec_product
              WHERE product_id = ?"
@@ -281,9 +292,10 @@
             $image_dir = __DIR__ . '/../../htdocs/ec_site/img';
             $image_path = $image_dir . '/' . $image['image_name'];
 
-            if (file_exists($image_path)) {
-                unlink($image_path);
+            if (file_exists($image_path) && !unlink($image_path)) {
+                error_log('商品画像の削除に失敗しました: ' . $image_path);
             }
+
         }
 
         return '商品を削除しました。';

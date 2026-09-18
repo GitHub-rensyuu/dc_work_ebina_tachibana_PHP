@@ -1,40 +1,16 @@
 <?php
 
 // ==============================
-// ユーザー情報を取得
-// ==============================
-function find_user($db, $user_name, $input_password)
-{
-    $sql = '
-        SELECT user_id, user_name, admin_flg
-        FROM ec_user
-        WHERE user_name = ?
-        AND password = ?
-    ';
-
-    $stmt = $db->prepare($sql);
-
-    if ($stmt === false) {
-        throw new Exception(
-            'SQLエラー：SQL文を準備できませんでした。'
-        );
-    }
-
-    $stmt->execute([
-        $user_name,
-        $input_password
-    ]);
-
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-// ==============================
 // ユーザー名からユーザー情報を取得
 // ==============================
 function find_user_by_user_name($db, $user_name)
 {
     $sql = '
-        SELECT user_id
+        SELECT
+            user_id,
+            user_name,
+            password,
+            admin_flg
         FROM ec_user
         WHERE user_name = ?
     ';
@@ -47,11 +23,30 @@ function find_user_by_user_name($db, $user_name)
         );
     }
 
-    $stmt->execute([
-        $user_name
-    ]);
+    $stmt->execute([$user_name]);
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+
+// ==============================
+// ログイン確認
+// ==============================
+function find_user($db, $user_name, $input_password)
+{
+    $user = find_user_by_user_name($db, $user_name);
+
+    // ユーザーが存在しない
+    if ($user === false) {
+        return false;
+    }
+
+    // パスワードを検証
+    if (!password_verify($input_password, $user['password'])) {
+        return false;
+    }
+
+    return $user;
 }
 
 
@@ -85,8 +80,14 @@ function register_user($db, $user_name, $password)
         );
     }
 
+    // パスワードをハッシュ化
+    $hashed_password = password_hash(
+        $password,
+        PASSWORD_DEFAULT
+    );
+
     return $stmt->execute([
         $user_name,
-        $password
+        $hashed_password
     ]);
 }

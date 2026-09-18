@@ -2,7 +2,13 @@
     // ==============================
     // セッション開始
     // ==============================
-    session_start();
+    require_once __DIR__ . '/../../include/common/session.php';
+
+
+    // ==============================
+    // 認証
+    // ==============================
+    require_once __DIR__ . '/../../include/common/auth.php';
 
     // ==============================
     // ログイン中か確認
@@ -54,13 +60,17 @@
     }
 
     // ==============================
-    // CookieからユーザーIDを取得
+    // Cookieからユーザー名を取得
     // ==============================
-    if (isset($_COOKIE['cookie_confirmation'])) {
-        $cookie_confirmation = 'checked';
+    if (
+        isset($_COOKIE['remember_user_name']) &&
+        $_COOKIE['remember_user_name'] === 'checked'
+    ) {
+        $remember_user_name = 'checked';
     } else {
-        $cookie_confirmation = '';
+        $remember_user_name = '';
     }
+
 
     if (isset($_COOKIE['user_name'])) {
         $user_name = $_COOKIE['user_name'];
@@ -178,30 +188,67 @@
             </div>
         <?php endif; ?>
 
-        <form action="login.php" method="post">
+    <form action="login.php" method="post">
 
-            <div class="form-row">
-                <label for="user_name">ユーザー名</label>
-                <input type="text" id="user_name" name="user_name" value="<?php
-                        echo htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8');
-                    ?>"
-                >
-            </div>
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= htmlspecialchars(
+                get_csrf_token(),
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>"
+        >
 
-            <div class="form-row">
-                <label for="password">パスワード</label>
-                <input type="password" id="password" name="password">
-            </div>
+        <div class="form-row">
+            <label for="user_name">ユーザー名</label>
 
-            <div class="cookie-check">
-                <input type="checkbox" name="cookie_confirmation" value="checked"
-                    <?php echo $cookie_confirmation; ?>
-                >
+            <input
+                type="text"
+                id="user_name"
+                name="user_name"
+                value="<?= htmlspecialchars(
+                    $user_name,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+                autocomplete="username"
+            >
+        </div>
+
+        <div class="form-row">
+            <label for="password">パスワード</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+            >
+        </div>
+
+        <div class="cookie-check">
+            <input
+                type="checkbox"
+                id="remember_user_name"
+                name="remember_user_name"
+                value="checked"
+                <?= $remember_user_name ?>
+            >
+
+            <label for="remember_user_name">
                 次回からユーザー名の入力を省略する
-            </div>
+            </label>
+        </div>
 
-            <input type="submit" value="ログイン" class="login-button">
-        </form>
+        <input
+            type="submit"
+            value="ログイン"
+            class="login-button"
+        >
+
+    </form>
+
 
         <a href="register.php" class="register-link">新規登録ページへ</a>
     </div>

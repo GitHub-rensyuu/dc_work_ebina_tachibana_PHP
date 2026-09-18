@@ -3,14 +3,7 @@
 // ==============================
 // セッション開始
 // ==============================
-session_start();
-
-// ==============================
-// CSRFトークン作成
-// ==============================
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+require_once __DIR__ . '/../../include/common/session.php';
 
 // ==============================
 // 共通認証処理を読み込む
@@ -207,7 +200,10 @@ $products = show_products($db);
     </p>
   <?php endif; ?>
 
-  <a href="admin_products.php">商品登録ページへ</a>
+  <?php if ($_SESSION['admin_flg'] === 1): ?>
+    <a href="admin_products.php">商品登録ページへ</a>
+  <?php endif; ?>
+
 
   <hr style="border:0; border-top:1px solid #bbb; width:100%; margin:20px 0;">
   <br>
@@ -230,13 +226,16 @@ $products = show_products($db);
 
         <!-- 商品画像 -->
         <div class="image-wrapper">
-
-          <img
-            src="img/<?= htmlspecialchars($product['image_name'],ENT_QUOTES,'UTF-8') ?>"
-            width="200"
-            height="200"
-            alt="商品画像"
-          >
+          <?php if (!empty($product['image_name'])): ?>
+            <img
+                src="img/<?= htmlspecialchars($product['image_name'], ENT_QUOTES, 'UTF-8') ?>"
+                width="200"
+                height="200"
+                alt="商品画像"
+            >
+          <?php else: ?>
+            <span>画像なし</span>
+          <?php endif; ?>
 
           <?php if ($is_sold_out): ?>
             <div class="sold-out-label">

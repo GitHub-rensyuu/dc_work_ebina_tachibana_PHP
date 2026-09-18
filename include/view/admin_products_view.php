@@ -44,7 +44,7 @@
 
   <form method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token"
-     value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+      value="<?= htmlspecialchars(get_csrf_token(),ENT_QUOTES,'UTF-8') ?>">
     商品名:<input type="text" name="product_name"><br>
     価格:<input type="number" name="price"><br>
     個数:<input type="number" name="stock_qty"><br>
@@ -83,7 +83,7 @@
   <!-- ログアウト -->
   <form action="admin_products.php" method="post">
     <input type="hidden" name="csrf_token"
-      value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+      value="<?= htmlspecialchars(get_csrf_token(), ENT_QUOTES,'UTF-8') ?>">
     <input type="submit" name="logout" value="ログアウト">
   </form>
   <br>
@@ -127,9 +127,13 @@
         <tr class="<?= $product['public_flg'] == 1 ? 'public' : 'private' ?>">
 
           <td class="product-image">
-            <img
-              src="img/<?= htmlspecialchars($product['image_name'], ENT_QUOTES, 'UTF-8') ?>"
-              width="200" height="200" alt="商品画像">
+            <?php if (!empty($product['image_name'])): ?>
+              <img
+                src="img/<?= htmlspecialchars($product['image_name'], ENT_QUOTES, 'UTF-8') ?>"
+                width="200" height="200" alt="商品画像">
+            <?php else: ?>
+              <span>画像なし</span>
+            <?php endif; ?>
           </td>
 
           <td>
@@ -139,13 +143,10 @@
           <td>
             <form method="post" style="display:flex; align-items:center; gap:5px;">
               <input type="hidden" name="csrf_token"
-                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
-
+                value="<?= htmlspecialchars(get_csrf_token(),ENT_QUOTES,'UTF-8') ?>">
               <input type="hidden" name="product_id"
                 value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
-
               <span>¥</span>
-
               <input
                 type="number"
                 name="price"
@@ -164,7 +165,7 @@
           <td>
             <form method="post" style="display:flex; align-items:center; gap:5px;">
               <input type="hidden" name="csrf_token"
-                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                value="<?= htmlspecialchars(get_csrf_token(),ENT_QUOTES,'UTF-8') ?>">
               <input type="hidden" name="product_id"
                 value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="number" name="stock_qty" value="<?= htmlspecialchars($product['stock_qty'], ENT_QUOTES, 'UTF-8') ?>"
@@ -175,9 +176,8 @@
 
           <td>
             <form method="post">
-
               <input type="hidden" name="csrf_token"
-                value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                value="<?= htmlspecialchars(get_csrf_token(),ENT_QUOTES,'UTF-8') ?>">
               <input type="hidden" name="product_id"
                 value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
 
@@ -192,7 +192,7 @@
           <td>
             <form method="post">
               <input type="hidden" name="csrf_token"
-              value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                  value="<?= htmlspecialchars(get_csrf_token(),ENT_QUOTES,'UTF-8') ?>">
               <input type="hidden" name="product_id"
               value="<?= htmlspecialchars($product['product_id'], ENT_QUOTES, 'UTF-8') ?>">
               <input type="submit" name="delete_product" value="削除する">

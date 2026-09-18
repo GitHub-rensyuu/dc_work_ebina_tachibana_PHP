@@ -29,7 +29,8 @@ function require_admin(){
 // ==============================
 // ログアウト処理
 // ==============================
-function logout(){
+function logout()
+{
     $_SESSION = [];
 
     if (ini_get('session.use_cookies')) {
@@ -39,11 +40,14 @@ function logout(){
         setcookie(
             session_name(),
             '',
-            time() - 3600,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
+            [
+                'expires' => time() - 3600,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => $params['httponly'],
+                'samesite' => $params['samesite']
+            ]
         );
     }
 
@@ -51,6 +55,20 @@ function logout(){
 
     header('Location: index.php');
     exit();
+}
+
+// ==============================
+// CSRFトークンを取得・生成
+// ==============================
+function get_csrf_token()
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(
+            random_bytes(32)
+        );
+    }
+
+    return $_SESSION['csrf_token'];
 }
 
 // ==============================
@@ -66,6 +84,7 @@ function verify_csrf_token()
             $_POST['csrf_token']
         )
     ) {
+        http_response_code(403);
         exit('不正なリクエストです。');
     }
 }

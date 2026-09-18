@@ -3,7 +3,7 @@
 // ==============================
 // セッション開始
 // ==============================
-session_start();
+require_once __DIR__ . '/../../include/common/session.php';
 
 // ==============================
 // ログイン中か確認
@@ -30,6 +30,11 @@ if (isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/../../include/model/user_model.php';
 
 // ==============================
+// 共通認証処理
+// ==============================
+require_once __DIR__ . '/../../include/common/auth.php';
+
+// ==============================
 // データベース接続
 // ==============================
 require_once __DIR__ . '/../../include/common/database.php';
@@ -39,6 +44,9 @@ $db = connect_database();
 // 登録処理
 // ==============================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // CSRFチェック
+    verify_csrf_token();
 
     // ==============================
     // POSTデータ取得
@@ -55,42 +63,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['register_error'] =
             'ユーザー名、パスワード、パスワード確認をすべて入力してください。';
 
+        $_SESSION['register_user_name'] = $user_name;
         header('Location: register.php');
         exit();
     }
 
     // ==============================
-    // ユーザー名の文字数チェック
+    // ユーザー名チェック
     // ==============================
-    if (strlen($user_name) < 5) {
+    if (
+        strlen($user_name) < 5 ||
+        !preg_match('/^[a-zA-Z0-9_]+$/', $user_name)
+    ) {
 
         $_SESSION['register_error'] =
             'ユーザー名は5文字以上かつ半角英数字とアンダースコア（_）のみ登録可能です。';
 
-        header('Location: register.php');
-        exit();
-    }
-
-    // ==============================
-    // ユーザー名の文字チェック
-    // 半角英数字とアンダースコアのみ許可
-    // ==============================
-    if (!preg_match('/^[a-zA-Z0-9_]+$/', $user_name)) {
-
-        $_SESSION['register_error'] =
-            'ユーザー名は5文字以上かつ半角英数字とアンダースコア（_）のみ登録可能です。';
+        $_SESSION['register_user_name'] = $user_name;
 
         header('Location: register.php');
         exit();
     }
 
     // ==============================
-    // パスワードの文字数チェック
+    // パスワード文字数チェック
     // ==============================
     if (strlen($password) < 8) {
 
         $_SESSION['register_error'] =
-            'パスワードは8文字以上で、半角英数字とアンダースコア（_）のみ使用できます。';
+            'パスワードは8文字以上で入力してください。';
+
+        $_SESSION['register_user_name'] = $user_name;
 
         header('Location: register.php');
         exit();
@@ -105,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['register_error'] =
             'パスワードは8文字以上で、半角英数字とアンダースコア（_）のみ使用できます。';
 
+        $_SESSION['register_user_name'] = $user_name;
         header('Location: register.php');
         exit();
     }
@@ -117,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['register_error'] =
             'パスワードとパスワード確認が一致しません。';
 
+        $_SESSION['register_user_name'] = $user_name;
         header('Location: register.php');
         exit();
     }
@@ -131,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['register_error'] =
             'そのユーザー名はすでに使用されています。';
 
+        $_SESSION['register_user_name'] = $user_name;
         header('Location: register.php');
         exit();
     }
@@ -138,19 +144,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ==============================
     // ユーザー登録
     // ==============================
-    $result = register_user($db, $user_name, $password);
+    try {
 
-    // ==============================
-    // 登録失敗
-    // ==============================
-    if ($result === false) {
+        $result = register_user($db, $user_name, $password);
 
+    } catch (PDOException $e) {
+
+        // 詳細なエラーはログに記録
+        error_log($e->getMessage());
+
+        // ユーザーには詳細を見せない
         $_SESSION['register_error'] =
             'ユーザー登録に失敗しました。';
+
+        $_SESSION['register_user_name'] = $user_name;
 
         header('Location: register.php');
         exit();
     }
+
 
     // ==============================
     // 登録成功
@@ -158,6 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['register_success'] =
         'ユーザー登録が完了しました。ログインしてください。';
 
+    $_SESSION['register_user_name'] = $user_name;
     header('Location: index.php');
     exit();
 }
@@ -166,16 +179,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // 登録エラー取得
 // ==============================
 if (isset($_SESSION['register_error'])) {
-
     $register_error = $_SESSION['register_error'];
-
     // 一度表示したら削除
     unset($_SESSION['register_error']);
-
 } else {
-
     $register_error = '';
 }
+
+$user_name = $_SESSION['register_user_name'] ?? '';
+unset($_SESSION['register_user_name']);
 
 ?>
 
@@ -277,24 +289,44 @@ if (isset($_SESSION['register_error'])) {
 
         <form action="register.php" method="post">
 
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars(
+                    get_csrf_token(),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+            >
+
             <div class="form-row">
-                <label for="user_name">ユーザー名</label>
+                <label for="user_name">
+                    ユーザー名
+                </label>
 
                 <input
                     type="text"
                     id="user_name"
                     name="user_name"
-                    value="<?= htmlspecialchars($_POST['user_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                    value="<?= htmlspecialchars(
+                        $user_name,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                    autocomplete="username"
                 >
             </div>
 
             <div class="form-row">
-                <label for="password">パスワード</label>
+                <label for="password">
+                    パスワード
+                </label>
 
                 <input
                     type="password"
                     id="password"
                     name="password"
+                    autocomplete="new-password"
                 >
             </div>
 
@@ -307,6 +339,7 @@ if (isset($_SESSION['register_error'])) {
                     type="password"
                     id="password_confirmation"
                     name="password_confirmation"
+                    autocomplete="new-password"
                 >
             </div>
 
