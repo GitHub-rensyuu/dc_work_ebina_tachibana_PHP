@@ -1,0 +1,60 @@
+table {
+    width: 800px;
+    border: solid black 1px;
+    border-collapse: separate;
+}
+
+th,
+td {
+    border: 1px solid #bbb;
+    padding: 10px;
+    white-space: nowrap;
+}
+
+caption {
+    text-align: left;
+}
+
+.product-image {
+    padding: 2px;
+}
+
+.product-image img {
+    display: block;
+}
+
+.public {
+    background-color: #fff;
+}
+
+.private {
+    background-color: #ddd;
+}
+
+.message-area {
+    height: 24px;
+}
+
+.message-error {
+    margin: 0;
+    color: red;
+}
+
+.message-success {
+    margin: 0;
+    color: blue;
+}
+
+.section-divider {
+    width: 100%;
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #bbb;
+}
+
+.price-form,
+.stock-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

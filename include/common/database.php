@@ -15,12 +15,15 @@
             $password
         );
 
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $db->setAttribute(
+            PDO::ATTR_ERRMODE,
+            PDO::ERRMODE_EXCEPTION
+        );
+
         return $db;
     } catch (PDOException $e) {
         error_log($e->getMessage());
+
         die('データベース接続に失敗しました。');
     }
   }
-
-?>

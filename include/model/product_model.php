@@ -5,7 +5,7 @@
 // ==============================
 function show_products($db)
 {
-    $stmt = $db->query("
+    $sql = '
         SELECT
             p.product_id,
             p.product_name,
@@ -19,7 +19,9 @@ function show_products($db)
         LEFT JOIN ec_image i
             ON p.product_id = i.product_id
         ORDER BY p.product_id ASC
-    ");
+    ';
+
+    $stmt = $db->query($sql);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -33,19 +35,19 @@ function add_cart($db, $user_id, $product_id){
     // 商品が存在するか確認
     // ==============================
     $stmt = $db->prepare(
-        "SELECT
+        'SELECT
             product_id,
             public_flg,
             price
          FROM ec_product
-         WHERE product_id = ?"
+         WHERE product_id = ?'
     );
 
     $stmt->execute([$product_id]);
 
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$product) {
+    if ($product === false) {
         return '商品が見つかりません。';
     }
 
@@ -60,9 +62,9 @@ function add_cart($db, $user_id, $product_id){
     // 在庫確認
     // ==============================
     $stmt = $db->prepare(
-        "SELECT stock_qty
+        'SELECT stock_qty
          FROM ec_stock
-         WHERE product_id = ?"
+         WHERE product_id = ?'
     );
 
     $stmt->execute([$product_id]);
@@ -77,12 +79,12 @@ function add_cart($db, $user_id, $product_id){
     // すでにカートに入っているか確認
     // ==============================
     $stmt = $db->prepare(
-        "SELECT
+        'SELECT
             cart_id,
             product_qty
          FROM ec_cart
          WHERE user_id = ?
-         AND product_id = ?"
+         AND product_id = ?'
     );
 
     $stmt->execute([
@@ -105,10 +107,10 @@ function add_cart($db, $user_id, $product_id){
         }
 
         $stmt = $db->prepare(
-            "UPDATE ec_cart
+            'UPDATE ec_cart
              SET product_qty = ?,
                  update_date = NOW()
-             WHERE cart_id = ?"
+             WHERE cart_id = ?'
         );
 
         $stmt->execute([
@@ -123,14 +125,14 @@ function add_cart($db, $user_id, $product_id){
     // カートにない場合
     // ==============================
     $stmt = $db->prepare(
-        "INSERT INTO ec_cart(
+        'INSERT INTO ec_cart(
             user_id,
             product_id,
             product_qty,
             create_date,
             update_date
         )
-        VALUES (?, ?, ?, NOW(), NOW())"
+        VALUES (?, ?, ?, NOW(), NOW())'
     );
 
     $stmt->execute([

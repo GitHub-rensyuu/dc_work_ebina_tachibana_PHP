@@ -7,22 +7,23 @@ function require_login()
 {
     if (!isset($_SESSION['user_id'])) {
         header('Location: index.php');
-        exit();
+        exit;
     }
 }
 
 // ==============================
 // 管理者か確認
 // ==============================
-function require_admin(){
+function require_admin()
+{
     require_login();
 
     if (
         !isset($_SESSION['admin_flg']) ||
-        $_SESSION['admin_flg'] !== 1
+        (int)$_SESSION['admin_flg'] !== 1
     ) {
         header('Location: products.php');
-        exit();
+        exit;
     }
 }
 
@@ -34,7 +35,6 @@ function logout()
     $_SESSION = [];
 
     if (ini_get('session.use_cookies')) {
-
         $params = session_get_cookie_params();
 
         setcookie(
@@ -54,7 +54,7 @@ function logout()
     session_destroy();
 
     header('Location: index.php');
-    exit();
+    exit;
 }
 
 // ==============================
@@ -79,6 +79,8 @@ function verify_csrf_token()
     if (
         !isset($_POST['csrf_token']) ||
         !isset($_SESSION['csrf_token']) ||
+        !is_string($_POST['csrf_token']) ||
+        !is_string($_SESSION['csrf_token']) ||
         !hash_equals(
             $_SESSION['csrf_token'],
             $_POST['csrf_token']

@@ -5,147 +5,7 @@
     <meta charset="UTF-8">
     <title>カート</title>
     <link rel="stylesheet" href="css/header.css">
-
-    <style>
-        table {
-            border: solid black 1px;
-            width: 800px;
-            border-collapse: collapse;
-            margin: 0 auto;
-        }
-
-        th,
-        td {
-            border: 1px solid #bbb;
-            padding: 10px;
-        }
-
-        th {
-            background-color: #eee;
-        }
-
-        tbody tr {
-            height: 100px;
-        }
-
-        /* 商品セル */
-        .product {
-            height: 100px;
-            vertical-align: middle;
-        }
-
-        /* 商品の中身 */
-        .product-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* 商品画像 */
-        .product img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-
-        /* 商品名 */
-        .product-name {
-            font-size: 16px;
-        }
-
-        /* 画像なし */
-        .no-image {
-            width: 80px;
-            text-align: center;
-            color: #888;
-        }
-
-        /* 削除ボタン */
-        td:nth-child(2) {
-            text-align: center;
-        }
-
-        /* 個数フォーム */
-        .qty-form {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            justify-content: center;
-        }
-
-        /* 個数入力欄 */
-        .qty-form input[type="number"] {
-            width: 35px;
-            padding: 3px;
-            box-sizing: border-box;
-        }
-
-        /* 変更ボタン */
-        .qty-form input[type="submit"] {
-            padding: 3px 5px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        /* 個数の列 */
-        .qty-form {
-            width: max-content;
-            margin: 0 auto;
-        }
-
-        /* 空のカート */
-        .empty-cart {
-            margin-top: 20px;
-            text-align: center;
-            color: red;
-            font-weight: bold;
-        }
-
-        .cart-error {
-            width: 800px;
-            margin: 20px auto;
-            text-align: center;
-            color: red;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        /* 合計金額 */
-        .total {
-            width: 800px;
-            text-align: right;
-            margin: 20px auto 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: red;
-        }
-
-        .purchase-form {
-            width: 800px;
-            margin: 20px auto 0;
-            text-align: right;
-        }
-
-        .purchase-form button {
-            padding: 10px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* 商品一覧へ戻る */
-        .cart-bottom {
-            width: 800px;
-            margin: 10px auto 0;
-            text-align: left;
-        }
-
-        /* タイトル */
-        h1 {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="css/cart_view.css">
 </head>
 
 <body>
@@ -208,6 +68,7 @@
 
                         <!-- 商品 -->
                         <td class="product">
+
                             <div class="product-content">
 
                                 <?php if (!empty($item['image_name'])): ?>
@@ -226,37 +87,49 @@
                                     >
 
                                 <?php else: ?>
+
+                                    <span class="no-image">
+                                        画像なし
+                                    </span>
+
+                                <?php endif; ?>
+
+                                <span class="product-name">
+                                    <?= htmlspecialchars(
+                                        $item['product_name'],
+                                        ENT_QUOTES,
+                                        'UTF-8'
+                                    ) ?>
+                                </span>
+
                             </div>
-                                <span class="no-image">画像なし</span>
-
-                            <?php endif; ?>
-
-                            <span class="product-name">
-                                <?= htmlspecialchars(
-                                    $item['product_name'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
-                            </span>
 
                         </td>
 
                         <!-- 削除 -->
                         <td>
                             <form action="cart.php" method="post">
+
                                 <input
                                     type="hidden"
-                                    name="cart_id"
+                                    name="csrf_token"
                                     value="<?= htmlspecialchars(
-                                        $item['cart_id'],
+                                        get_csrf_token(),
                                         ENT_QUOTES,
                                         'UTF-8'
                                     ) ?>"
                                 >
 
+                                <input
+                                    type="hidden"
+                                    name="cart_id"
+                                    value="<?= (int)$item['cart_id'] ?>"
+                                >
+
                                 <button type="submit" name="delete_cart">
                                     削除する
                                 </button>
+
                             </form>
                         </td>
 
@@ -267,26 +140,32 @@
 
                         <!-- 個数 -->
                         <td>
-                            <form action="cart.php" method="post" class="qty-form">
+                            <form
+                                action="cart.php"
+                                method="post"
+                                class="qty-form"
+                            >
 
                                 <input
                                     type="hidden"
-                                    name="cart_id"
+                                    name="csrf_token"
                                     value="<?= htmlspecialchars(
-                                        $item['cart_id'],
+                                        get_csrf_token(),
                                         ENT_QUOTES,
                                         'UTF-8'
                                     ) ?>"
                                 >
 
                                 <input
+                                    type="hidden"
+                                    name="cart_id"
+                                    value="<?= (int)$item['cart_id'] ?>"
+                                >
+
+                                <input
                                     type="number"
                                     name="product_qty"
-                                    value="<?= htmlspecialchars(
-                                        $item['product_qty'],
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>"
+                                    value="<?= (int)$item['product_qty'] ?>"
                                     min="1"
                                 >
 
@@ -318,7 +197,22 @@
             ¥ <?= number_format($total) ?>
         </div>
 
-        <form action="cart.php" method="post" class="purchase-form">
+        <form
+            action="cart.php"
+            method="post"
+            class="purchase-form"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars(
+                    get_csrf_token(),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>"
+            >
+
             <button type="submit" name="purchase">
                 購入する
             </button>
