@@ -55,6 +55,7 @@ $products = show_products($db);
     <meta charset="UTF-8">
     <title>商品一覧ページ</title>
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/products.css">
 </head>
 
 <body>
