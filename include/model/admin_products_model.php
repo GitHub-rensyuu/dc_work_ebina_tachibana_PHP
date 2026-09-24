@@ -1,13 +1,7 @@
 <?php
 
 // 商品登録時の入力チェック
-function validate_product_post(
-    $product_name,
-    $price,
-    $stock_qty,
-    $public_flg,
-    $file
-) {
+function validate_product_post($product_name,$price,$stock_qty,$public_flg,$file) {
     $product_name = trim($product_name);
 
     if ($product_name === '') {
@@ -67,12 +61,7 @@ function validate_product_post(
 
 
 // 商品テーブルへの保存
-function insert_product(
-    $db,
-    $product_name,
-    $price,
-    $public_flg
-) {
+function insert_product($db,$product_name,$price,$public_flg) {
     $sql = "
         INSERT INTO ec_product (
             product_name,
@@ -101,11 +90,7 @@ function insert_product(
 
 
 // 在庫テーブルへの保存
-function insert_stock(
-    $db,
-    $product_id,
-    $stock_qty
-) {
+function insert_stock($db,$product_id,$stock_qty) {
     $sql = "
         INSERT INTO ec_stock (
             product_id,
@@ -131,11 +116,7 @@ function insert_stock(
 
 
 // 画像テーブルへの保存
-function insert_image(
-    $db,
-    $product_id,
-    $image_name
-) {
+function insert_image($db,$product_id,$image_name) {
     $sql = "
         INSERT INTO ec_image (
             product_id,
@@ -161,14 +142,7 @@ function insert_image(
 
 
 // 商品登録
-function register_product(
-    $db,
-    $product_name,
-    $price,
-    $stock_qty,
-    $public_flg,
-    $file
-) {
+function register_product($db,$product_name,$price,$stock_qty,$public_flg,$file) {
     $image_path = null;
 
     try {
@@ -272,8 +246,7 @@ function register_product(
 
 
 // 公開・非公開の切り替え
-function update_public($db, $product_id)
-{
+function update_public($db, $product_id){
     try {
         $sql = "
             SELECT public_flg
@@ -320,11 +293,7 @@ function update_public($db, $product_id)
 
 
 // 在庫数変更
-function update_stock(
-    $db,
-    $product_id,
-    $stock_qty
-) {
+function update_stock($db,$product_id,$stock_qty) {
     try {
         $sql = "
             SELECT product_id
@@ -364,11 +333,7 @@ function update_stock(
 
 
 // 価格変更
-function update_price(
-    $db,
-    $product_id,
-    $price
-) {
+function update_price($db,$product_id,$price) {
     try {
         $sql = "
             SELECT product_id
@@ -408,8 +373,7 @@ function update_price(
 
 
 // 商品削除
-function delete_product($db, $product_id)
-{
+function delete_product($db, $product_id){
     $image_name = null;
 
     try {

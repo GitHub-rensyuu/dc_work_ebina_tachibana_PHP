@@ -28,7 +28,7 @@
         <input type="number" name="price">
         <br>
 
-        個数:
+        在庫数:
         <input type="number" name="stock_qty">
         <br>
 
@@ -146,7 +146,7 @@
         <tbody>
             <?php foreach ($products as $product): ?>
 
-                <tr class="<?= $product['public_flg'] === 1 ? 'public' : 'private' ?>">
+                <tr class="<?= (int)$product['public_flg'] === 1 ? 'public' : 'private' ?>">
 
                     <td class="product-image">
                         <?php if (!empty($product['image_name'])): ?>
@@ -283,7 +283,7 @@
                                 ) ?>"
                             >
 
-                            <?php if ($product['public_flg'] === 1): ?>
+                            <?php if ((int)$product['public_flg'] === 1): ?>
 
                                 <input
                                     type="submit"

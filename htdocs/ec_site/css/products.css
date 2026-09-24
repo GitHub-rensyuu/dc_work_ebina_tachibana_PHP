@@ -105,6 +105,18 @@
     background-color: #ddd;
 }
 
+/* カートメッセージ */
+.cart-message {
+    color: blue;
+}
+
+.section-divider {
+    border: 0;
+    border-top: 1px solid #bbb;
+    width: 100%;
+    margin: 20px 0;
+}
+
 /* 売り切れ表示 */
 .sold-out-label {
     position: absolute;
@@ -131,3 +143,4 @@
 h1 {
     text-align: center;
 }
+

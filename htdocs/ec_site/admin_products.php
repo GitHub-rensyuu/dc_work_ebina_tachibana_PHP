@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     header('Location: admin_products.php');
-    exit();
+    exit;
 }
 
 $message = $_SESSION['admin_product_message'] ?? '';

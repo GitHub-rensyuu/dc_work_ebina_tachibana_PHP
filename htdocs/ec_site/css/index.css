@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+}
+
+.container {
+    width: 400px;
+    margin: 40px auto 0;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.login-error {
+    margin-bottom: 20px;
+    color: #d00;
+    font-weight: bold;
+}
+
+.register-success {
+    margin-bottom: 20px;
+    color: #080;
+    font-weight: bold;
+}
+
+form {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.form-row label {
+    width: 90px;
+    margin-right: 10px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.form-row input[type="text"],
+.form-row input[type="password"] {
+    width: 210px;
+    height: 28px;
+    box-sizing: border-box;
+}
+
+.cookie-check {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.login-button {
+    width: 210px;
+    height: 30px;
+    background-color: #4c4cca;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.register-link {
+    display: block;
+    margin-top: 10px;
+    color: #333;
+}

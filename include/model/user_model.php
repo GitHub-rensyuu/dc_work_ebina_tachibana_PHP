@@ -1,39 +1,34 @@
 <?php
 
-// ==============================
-// ユーザー名からユーザー情報を取得
-// ==============================
-function find_user_by_user_name($db, $user_name)
-{
-    $sql = '
-        SELECT
-            user_id,
-            user_name,
-            password,
-            admin_flg
-        FROM ec_user
-        WHERE user_name = ?
-    ';
+    // ユーザー名からユーザー情報を取得
+    function find_user_by_user_name($db, $user_name){
+        $sql = '
+            SELECT
+                user_id,
+                user_name,
+                password,
+                admin_flg
+            FROM ec_user
+            WHERE user_name = ?
+        ';
 
-    $stmt = $db->prepare($sql);
+        $stmt = $db->prepare($sql);
 
-    if ($stmt === false) {
-        throw new Exception(
-            'SQLエラー：SQL文を準備できませんでした。'
-        );
+        if ($stmt === false) {
+            throw new Exception(
+                'SQLエラー：SQL文を準備できませんでした。'
+            );
+        }
+
+        $stmt->execute([$user_name]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    $stmt->execute([$user_name]);
-
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
 
 
-// ==============================
 // ログイン確認
-// ==============================
-function find_user($db, $user_name, $input_password)
-{
+function find_user($db, $user_name, $input_password){
     $user = find_user_by_user_name($db, $user_name);
 
     // ユーザーが存在しない
@@ -50,11 +45,9 @@ function find_user($db, $user_name, $input_password)
 }
 
 
-// ==============================
+
 // ユーザー登録
-// ==============================
-function register_user($db, $user_name, $password)
-{
+function register_user($db, $user_name, $password){
     $sql = '
         INSERT INTO ec_user (
             user_name,

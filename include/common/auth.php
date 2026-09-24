@@ -1,21 +1,17 @@
 <?php
 
-// ==============================
+
 // ログイン済みか確認
-// ==============================
-function require_login()
-{
+function require_login(){
     if (!isset($_SESSION['user_id'])) {
         header('Location: index.php');
         exit;
     }
 }
 
-// ==============================
+
 // 管理者か確認
-// ==============================
-function require_admin()
-{
+function require_admin(){
     require_login();
 
     if (
@@ -27,11 +23,9 @@ function require_admin()
     }
 }
 
-// ==============================
+
 // ログアウト処理
-// ==============================
-function logout()
-{
+function logout(){
     $_SESSION = [];
 
     if (ini_get('session.use_cookies')) {
@@ -57,11 +51,9 @@ function logout()
     exit;
 }
 
-// ==============================
+
 // CSRFトークンを取得・生成
-// ==============================
-function get_csrf_token()
-{
+function get_csrf_token(){
     if (!isset($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(
             random_bytes(32)
@@ -71,11 +63,9 @@ function get_csrf_token()
     return $_SESSION['csrf_token'];
 }
 
-// ==============================
+
 // CSRFトークンを確認
-// ==============================
-function verify_csrf_token()
-{
+function verify_csrf_token(){
     if (
         !isset($_POST['csrf_token']) ||
         !isset($_SESSION['csrf_token']) ||

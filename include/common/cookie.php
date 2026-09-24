@@ -2,11 +2,9 @@
 
 define('COOKIE_EXPIRATION_DAYS', 30);
 
-// ==============================
+
 // ログインユーザー名Cookieを保存
-// ==============================
-function save_login_cookie($user_name)
-{
+function save_login_cookie($user_name){
     $expiration =
         time() + COOKIE_EXPIRATION_DAYS * 24 * 60 * 60;
 
@@ -35,11 +33,8 @@ function save_login_cookie($user_name)
     );
 }
 
-// ==============================
 // ログインユーザー名Cookieを削除
-// ==============================
-function delete_login_cookie()
-{
+function delete_login_cookie(){
     $expiration = time() - 3600;
 
     setcookie(

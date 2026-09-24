@@ -151,70 +151,7 @@ unset($_SESSION['register_user_name']);
     <meta charset="UTF-8">
     <title>ユーザー登録</title>
     <link rel="stylesheet" href="css/header.css">
-
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 400px;
-            margin: 40px auto 0;
-            text-align: center;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .register-error {
-            margin-bottom: 20px;
-            color: #d00;
-            font-weight: bold;
-        }
-
-        form {
-            width: 100%;
-        }
-
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .form-row label {
-            width: 130px;
-            margin-right: 10px;
-            text-align: right;
-            font-weight: bold;
-        }
-
-        .form-row input[type="text"],
-        .form-row input[type="password"] {
-            width: 210px;
-            height: 28px;
-            box-sizing: border-box;
-        }
-
-        .register-button {
-            width: 210px;
-            height: 30px;
-            margin-top: 10px;
-            background-color: #4c4cca;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .login-link {
-            display: block;
-            margin-top: 10px;
-            color: #333;
-        }
-    </style>
+    <link rel="stylesheet" href="css/register.css">
 </head>
 
 <body>

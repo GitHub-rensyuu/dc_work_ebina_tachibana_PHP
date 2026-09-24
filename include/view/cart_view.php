@@ -167,6 +167,7 @@
                                     name="product_qty"
                                     value="<?= (int)$item['product_qty'] ?>"
                                     min="1"
+                                    max="<?= (int)$item['stock_qty'] ?>"
                                 >
 
                                 <input

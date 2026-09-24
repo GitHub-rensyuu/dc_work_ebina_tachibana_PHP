@@ -1,10 +1,8 @@
 <?php
 
-// ==============================
+
 // 商品一覧を取得
-// ==============================
-function show_products($db)
-{
+function show_products($db){
     $sql = '
         SELECT
             p.product_id,
@@ -26,58 +24,67 @@ function show_products($db)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// ==============================
+
 // カートに商品を追加
-// ==============================
 function add_cart($db, $user_id, $product_id){
 
-    // ==============================
-    // 商品が存在するか確認
-    // ==============================
-    $stmt = $db->prepare(
-        'SELECT
+    
+    // 商品が存在するか確認   
+    $sql = '
+        SELECT
             product_id,
             public_flg,
             price
-         FROM ec_product
-         WHERE product_id = ?'
-    );
+        FROM ec_product
+        WHERE product_id = ?
+    ';
 
-    $stmt->execute([$product_id]);
+    $stmt = $db->prepare($sql);
+
+    $stmt->execute([
+        $product_id
+    ]);
 
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
 
     if ($product === false) {
         return '商品が見つかりません。';
     }
 
-    // ==============================
-    // 非公開の商品は追加できない
-    // ==============================
+    
+    // 非公開の商品は追加できない   
     if ((int)$product['public_flg'] !== 1) {
         return 'この商品は現在購入できません。';
     }
 
-    // ==============================
-    // 在庫確認
-    // ==============================
-    $stmt = $db->prepare(
-        'SELECT stock_qty
-         FROM ec_stock
-         WHERE product_id = ?'
-    );
+    
+    // 在庫確認    
+    $sql = '
+        SELECT
+            stock_qty
+        FROM ec_stock
+        WHERE product_id = ?
+    ';
 
-    $stmt->execute([$product_id]);
+    $stmt = $db->prepare($sql);
+
+    $stmt->execute([
+        $product_id
+    ]);
 
     $stock = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$stock || (int)$stock['stock_qty'] <= 0) {
+    if (
+        $stock === false ||
+        (int)$stock['stock_qty'] <= 0
+    ) {
         return 'この商品は売り切れです。';
     }
 
-    // ==============================
-    // すでにカートに入っているか確認
-    // ==============================
+
+    
+    // すでにカートに入っているか確認    
     $stmt = $db->prepare(
         'SELECT
             cart_id,
@@ -94,10 +101,9 @@ function add_cart($db, $user_id, $product_id){
 
     $cart = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // ==============================
-    // すでにカートにある場合
-    // ==============================
-    if ($cart) {
+    
+    // すでにカートにある場合    
+    if ($cart !== false) {
 
         $new_qty = (int)$cart['product_qty'] + 1;
 
@@ -121,9 +127,8 @@ function add_cart($db, $user_id, $product_id){
         return 'カートの商品数を1個増やしました。';
     }
 
-    // ==============================
-    // カートにない場合
-    // ==============================
+    
+    // カートにない場合  
     $stmt = $db->prepare(
         'INSERT INTO ec_cart(
             user_id,

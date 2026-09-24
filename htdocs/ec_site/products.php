@@ -68,7 +68,7 @@ require_once __DIR__ . '/header.php';
 <h1>商品一覧</h1>
 
 <?php if ($cart_message !== ''): ?>
-    <p style="color: blue;">
+    <p class="cart-message">
         <?= htmlspecialchars(
             $cart_message,
             ENT_QUOTES,
@@ -77,20 +77,14 @@ require_once __DIR__ . '/header.php';
     </p>
 <?php endif; ?>
 
+
 <?php if ((int)$_SESSION['admin_flg'] === 1): ?>
     <a href="admin_products.php">
         商品登録ページへ
     </a>
 <?php endif; ?>
 
-<hr
-    style="
-        border: 0;
-        border-top: 1px solid #bbb;
-        width: 100%;
-        margin: 20px 0;
-    "
->
+<hr class="section-divider">
 
 <ul class="product-list">
 

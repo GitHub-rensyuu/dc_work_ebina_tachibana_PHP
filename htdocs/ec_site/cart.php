@@ -31,6 +31,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $db->beginTransaction();
 
+            // 購入直前に公開状態を再確認
+            foreach ($purchase_items as $item) {
+                $stmt = $db->prepare(
+                    'SELECT public_flg
+                    FROM ec_product
+                    WHERE product_id = ?'
+                );
+
+                $stmt->execute([
+                    (int)$item['product_id']
+                ]);
+
+                $product = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (
+                    $product === false ||
+                    (int)$product['public_flg'] !== 1
+                ) {
+                    throw new RuntimeException(
+                        $item['product_name'] .
+                        'は現在購入できません。'
+                    );
+                }
+            }
+
+            // 在庫を減らす
             foreach ($purchase_items as $item) {
                 $result = reduce_stock(
                     $db,
@@ -45,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     );
                 }
             }
+
 
             foreach ($purchase_items as $item) {
                 if (
@@ -98,23 +125,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             FILTER_VALIDATE_INT
         );
 
-        if (
-            $cart_id !== false &&
-            $cart_id !== null &&
-            $product_qty !== false &&
-            $product_qty !== null &&
-            $product_qty >= 1
-        ) {
-            change_cart_qty(
-                $db,
-                $user_id,
-                $cart_id,
-                $product_qty
-            );
-        }
+    if (
+        $cart_id !== false &&
+        $cart_id !== null &&
+        $product_qty !== false &&
+        $product_qty !== null &&
+        $product_qty >= 1
+    ) {
+        $result = change_cart_qty(
+            $db,
+            $user_id,
+            $cart_id,
+            $product_qty
+        );
 
-        header('Location: cart.php');
-        exit;
+        // エラーの場合はメッセージを保存
+        if ($result !== true) {
+            $_SESSION['cart_error'] = $result;
+        }
+    } else {
+        $_SESSION['cart_error'] =
+            '個数には1以上の整数を指定してください。';
+    }
+
+    header('Location: cart.php');
+    exit;
+
     }
 
     // 商品削除
