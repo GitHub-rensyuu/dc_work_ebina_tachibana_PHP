@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../include/common/session.php';
 require_once __DIR__ . '/../../include/common/auth.php';
 
-require_login();
+require_user();
 
 require_once __DIR__ . '/../../include/model/product_model.php';
 require_once __DIR__ . '/../../include/common/database.php';
@@ -15,6 +15,13 @@ $user_id = (int)$_SESSION['user_id'];
 // POST処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token();
+    if (
+        isset($_SESSION['admin_flg']) &&
+        (int)$_SESSION['admin_flg'] === 1
+    ) {
+        header('Location: admin_products.php');
+        exit;
+    }
 
     if (isset($_POST['add_cart'])) {
         $product_id = filter_input(
@@ -141,13 +148,6 @@ require_once __DIR__ . '/header.php';
             'UTF-8'
         ) ?>
     </p>
-<?php endif; ?>
-
-
-<?php if ((int)$_SESSION['admin_flg'] === 1): ?>
-    <a href="admin_products.php">
-        商品登録ページへ
-    </a>
 <?php endif; ?>
 
 <hr class="section-divider">

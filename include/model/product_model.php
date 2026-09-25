@@ -1,7 +1,7 @@
 <?php
 
 // 商品一覧を取得
-function show_products($db, $search, $sort){
+function show_products($db, $search = '', $sort = ''){
     $sql = '
         SELECT
             p.product_id,

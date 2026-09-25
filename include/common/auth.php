@@ -9,6 +9,18 @@ function require_login(){
     }
 }
 
+// 一般ユーザーか確認
+function require_user(){
+    require_login();
+
+    if (
+        isset($_SESSION['admin_flg']) &&
+        (int)$_SESSION['admin_flg'] === 1
+    ) {
+        header('Location: admin_products.php');
+        exit;
+    }
+}
 
 // 管理者か確認
 function require_admin(){

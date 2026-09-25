@@ -79,8 +79,6 @@
 
     <?php endif; ?>
 
-    <a href="products.php">商品一覧ページへ</a>
-
     <!-- ログアウト -->
     <form action="admin_products.php" method="post">
         <input
