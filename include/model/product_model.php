@@ -1,8 +1,7 @@
 <?php
 
-
 // 商品一覧を取得
-function show_products($db){
+function show_products($db, $search, $sort){
     $sql = '
         SELECT
             p.product_id,
@@ -16,19 +15,33 @@ function show_products($db){
             ON p.product_id = s.product_id
         LEFT JOIN ec_image i
             ON p.product_id = i.product_id
-        ORDER BY p.product_id ASC
+        WHERE p.product_name LIKE ?
     ';
 
-    $stmt = $db->query($sql);
+    if ($sort === 'price_asc') {
+        $sql .= ' ORDER BY p.price ASC';
+    } elseif ($sort === 'price_desc') {
+        $sql .= ' ORDER BY p.price DESC';
+    } elseif ($sort === 'newest') {
+        $sql .= ' ORDER BY p.product_id DESC';
+    } else {
+        $sql .= ' ORDER BY p.product_id ASC';
+    }
+
+    $stmt = $db->prepare($sql);
+
+    $stmt->execute([
+        '%' . $search . '%'
+    ]);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 
+
 // カートに商品を追加
 function add_cart($db, $user_id, $product_id){
 
-    
     // 商品が存在するか確認   
     $sql = '
         SELECT

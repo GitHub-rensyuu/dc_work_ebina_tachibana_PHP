@@ -43,8 +43,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $cart_message = $_SESSION['cart_message'] ?? '';
 unset($_SESSION['cart_message']);
 
+// 商品検索・並び替え条件取得
+$keyword = $_GET['keyword'] ?? '';
+$sort = $_GET['sort'] ?? '';
+
 // 商品一覧取得
-$products = show_products($db);
+$products = show_products(
+    $db,
+    $keyword,
+    $sort
+);
 
 ?>
 
@@ -66,6 +74,64 @@ require_once __DIR__ . '/header.php';
 ?>
 
 <h1>商品一覧</h1>
+
+<form action="products.php" method="get" class="search-form">
+
+    <input
+        type="search"
+        name="keyword"
+        value="<?= htmlspecialchars(
+            $keyword,
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
+        placeholder="商品名を入力"
+    >
+
+    <button type="submit">
+        検索
+    </button>
+
+</form>
+
+<form action="products.php" method="get" class="sort-form">
+
+    <input
+        type="hidden"
+        name="keyword"
+        value="<?= htmlspecialchars(
+            $keyword,
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
+    >
+
+    <label for="sort">並び順</label>
+
+    <select name="sort">
+        <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>
+            古い順
+        </option>
+
+        <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>
+            新しい順
+        </option>
+
+        <option value="price_asc" <?= $sort === 'price_asc' ? 'selected' : '' ?>>
+            価格が安い順
+        </option>
+
+        <option value="price_desc" <?= $sort === 'price_desc' ? 'selected' : '' ?>>
+            価格が高い順
+        </option>
+    </select>
+
+
+    <button type="submit">
+        並び替え
+    </button>
+
+</form>
 
 <?php if ($cart_message !== ''): ?>
     <p class="cart-message">

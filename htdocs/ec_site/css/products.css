@@ -117,6 +117,26 @@
     margin: 20px 0;
 }
 
+/* 検索フォーム・ソート */
+.search-form,
+.sort-form {
+    margin-bottom: 20px;
+}
+
+.search-form input[type="search"] {
+    width: 250px;
+    padding: 8px;
+}
+
+.search-form button,
+.sort-form button {
+    padding: 8px 16px;
+}
+
+.sort-form select {
+    padding: 8px;
+}
+
 /* 売り切れ表示 */
 .sold-out-label {
     position: absolute;
@@ -133,6 +153,7 @@
 
     font-weight: bold;
 }
+
 
 /* 売り切れ商品 */
 .sold-out {
