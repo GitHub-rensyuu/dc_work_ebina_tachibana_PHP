@@ -4,13 +4,7 @@ require_once __DIR__ . '/../config/const.php';
 
 
 // 商品登録時の入力チェック
-function validate_product_post(
-    $product_name,
-    $price,
-    $stock_qty,
-    $public_flg,
-    $file
-) {
+function validate_product_post($product_name,$price,$stock_qty,$public_flg,$file) {
     $product_name = trim($product_name);
 
     if ($product_name === '') {
@@ -88,14 +82,7 @@ function validate_product_post(
 
 
 // 商品登録
-function register_product(
-    $db,
-    $product_name,
-    $price,
-    $stock_qty,
-    $public_flg,
-    $file
-) {
+function register_product($db,$product_name,$price,$stock_qty,$public_flg,$file) {
     $image_path = null;
 
     try {
@@ -283,11 +270,7 @@ function insert_image($db,$product_id,$image_name) {
 }
 
 // 商品の在庫数を変更
-function update_stock(
-    $db,
-    $product_id,
-    $stock_qty
-) {
+function update_stock($db,$product_id,$stock_qty) {
     try {
         $sql = '
             UPDATE ec_stock
@@ -319,11 +302,7 @@ function update_stock(
 
 
 // 商品の価格を変更
-function update_price(
-    $db,
-    $product_id,
-    $price
-) {
+function update_price($db,$product_id,$price) {
     try {
         $sql = '
             UPDATE ec_product
@@ -355,10 +334,7 @@ function update_price(
 
 
 // 商品の公開・非公開を切り替える
-function update_public(
-    $db,
-    $product_id
-) {
+function update_public($db,$product_id) {
     try {
         // 現在の公開状態を取得
         $sql = '
@@ -422,10 +398,7 @@ function update_public(
 
 
 // 商品を削除
-function delete_product(
-    $db,
-    $product_id
-) {
+function delete_product($db,$product_id) {
     $image_paths = [];
 
     try {
