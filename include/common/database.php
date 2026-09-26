@@ -1,33 +1,30 @@
 <?php
-  
-    function connect_database(){
-        // データベース接続情報
-        $host = 'localhost';
-        $login_user = 'xb513874_h8646';
-        $password = '1r86160zfh';
-        $database = 'xb513874_g1gw7';
-  
-        // データベースへ接続、文字コード設定
-        try {
-            $db = new PDO(
-                "mysql:host=$host;dbname=$database;charset=utf8mb4",
-                $login_user,
-                $password
-            );
 
-            $db->setAttribute(
-                PDO::ATTR_ERRMODE,
-                PDO::ERRMODE_EXCEPTION
-            );
+require_once __DIR__ . '/../config/const.php';
 
-            return $db;
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
+function connect_database(){
+    try {
+        $db = new PDO(
+            'mysql:host=' . DB_HOST .
+            ';dbname=' . DB_NAME .
+            ';charset=' . DB_CHARSET,
+            DB_USER,
+            DB_PASSWORD
+        );
 
-            throw new RuntimeException(
-                'データベース接続に失敗しました。',
-                0,
-                $e
-            );
-        }
+        $db->setAttribute(
+            PDO::ATTR_ERRMODE,
+            PDO::ERRMODE_EXCEPTION
+        );
+
+        return $db;
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+
+        throw new RuntimeException(
+            'データベース接続に失敗しました。',
+            0,
+            $e
+        );
     }
+}

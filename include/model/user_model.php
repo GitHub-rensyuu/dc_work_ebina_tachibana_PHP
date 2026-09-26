@@ -56,12 +56,13 @@ function register_user($db, $user_name, $password){
             update_date,
             admin_flg
         )
+
         VALUES (
             ?,
             ?,
             NOW(),
             NOW(),
-            0
+            ?
         )
     ';
 
@@ -81,6 +82,8 @@ function register_user($db, $user_name, $password){
 
     return $stmt->execute([
         $user_name,
-        $hashed_password
+        $hashed_password,
+        ADMIN_FLG_USER
     ]);
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../../include/config/const.php';
 require_once __DIR__ . '/../../include/common/session.php';
 require_once __DIR__ . '/../../include/common/auth.php';
 
@@ -7,13 +8,13 @@ require_once __DIR__ . '/../../include/common/auth.php';
 if (isset($_SESSION['user_id'])) {
     if (
         isset($_SESSION['admin_flg']) &&
-        (int)$_SESSION['admin_flg'] === 1
+        (int)$_SESSION['admin_flg'] === ADMIN_FLG_ADMIN
     ) {
-        header('Location: admin_products.php');
+        header('Location: ' . PAGE_ADMIN_PRODUCTS);
         exit;
     }
 
-    header('Location: products.php');
+    header('Location: ' . PAGE_PRODUCTS);
     exit;
 }
 
@@ -29,13 +30,13 @@ unset($_SESSION['register_success']);
 $remember_user_name = '';
 
 if (
-    isset($_COOKIE['remember_user_name']) &&
-    $_COOKIE['remember_user_name'] === 'checked'
+    isset($_COOKIE[COOKIE_REMEMBER_USER_NAME]) &&
+    $_COOKIE[COOKIE_REMEMBER_USER_NAME] === COOKIE_VALUE_CHECKED
 ) {
     $remember_user_name = 'checked';
 }
 
-$user_name = $_COOKIE['user_name'] ?? '';
+$user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
 
 ?>
 

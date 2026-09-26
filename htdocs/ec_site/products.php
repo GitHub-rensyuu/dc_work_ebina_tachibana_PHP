@@ -15,11 +15,12 @@ $user_id = (int)$_SESSION['user_id'];
 // POST処理
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf_token();
+
     if (
         isset($_SESSION['admin_flg']) &&
-        (int)$_SESSION['admin_flg'] === 1
+        (int)$_SESSION['admin_flg'] === ADMIN_FLG_ADMIN
     ) {
-        header('Location: admin_products.php');
+        header('Location: ' . PAGE_ADMIN_PRODUCTS);
         exit;
     }
 
@@ -116,21 +117,34 @@ require_once __DIR__ . '/header.php';
     <label for="sort">並び順</label>
 
     <select name="sort">
-        <option value="oldest" <?= $sort === 'oldest' ? 'selected' : '' ?>>
+        <option
+            value="<?= PRODUCT_SORT_OLDEST ?>"
+            <?= $sort === PRODUCT_SORT_OLDEST ? 'selected' : '' ?>
+        >
             古い順
         </option>
 
-        <option value="newest" <?= $sort === 'newest' ? 'selected' : '' ?>>
+        <option
+            value="<?= PRODUCT_SORT_NEWEST ?>"
+            <?= $sort === PRODUCT_SORT_NEWEST ? 'selected' : '' ?>
+        >
             新しい順
         </option>
 
-        <option value="price_asc" <?= $sort === 'price_asc' ? 'selected' : '' ?>>
+        <option
+            value="<?= PRODUCT_SORT_PRICE_ASC ?>"
+            <?= $sort === PRODUCT_SORT_PRICE_ASC ? 'selected' : '' ?>
+        >
             価格が安い順
         </option>
 
-        <option value="price_desc" <?= $sort === 'price_desc' ? 'selected' : '' ?>>
+        <option
+            value="<?= PRODUCT_SORT_PRICE_DESC ?>"
+            <?= $sort === PRODUCT_SORT_PRICE_DESC ? 'selected' : '' ?>
+        >
             価格が高い順
         </option>
+
     </select>
 
 
@@ -157,9 +171,10 @@ require_once __DIR__ . '/header.php';
 <?php foreach ($products as $product): ?>
 
     <?php
-    if ((int)$product['public_flg'] !== 1) {
-        continue;
-    }
+
+        if ((int)$product['public_flg'] !== PRODUCT_PUBLIC_FLG_PUBLIC) {
+            continue;
+        }
 
     $is_sold_out =
         (int)$product['stock_qty'] === 0;

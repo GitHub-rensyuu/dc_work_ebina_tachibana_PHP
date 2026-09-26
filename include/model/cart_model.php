@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../config/const.php';
 
 // カートの商品を取得
 function show_cart($db, $user_id){
@@ -20,12 +21,12 @@ function show_cart($db, $user_id){
             ON c.product_id = s.product_id
         LEFT JOIN ec_image i
             ON p.product_id = i.product_id
-        WHERE c.user_id = ? AND p.public_flg = 1
+        WHERE c.user_id = ? AND p.public_flg = ?
         ORDER BY c.cart_id ASC
     ';
 
     $stmt = $db->prepare($sql);
-    $stmt->execute([$user_id]);
+    $stmt->execute([$user_id,PRODUCT_PUBLIC_FLG_PUBLIC]);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

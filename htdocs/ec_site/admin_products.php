@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    header('Location: admin_products.php');
+    header('Location: ' . PAGE_ADMIN_PRODUCTS);
     exit;
 }
 

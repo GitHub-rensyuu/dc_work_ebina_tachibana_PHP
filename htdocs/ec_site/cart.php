@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cart_id !== null &&
         $product_qty !== false &&
         $product_qty !== null &&
-        $product_qty >= 1
+        $product_qty >= CART_MIN_QTY
     ) {
         $result = change_cart_qty(
             $db,

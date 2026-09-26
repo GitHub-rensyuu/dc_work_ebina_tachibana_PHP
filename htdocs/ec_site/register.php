@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../../include/config/const.php';
 require_once __DIR__ . '/../../include/common/session.php';
 require_once __DIR__ . '/../../include/common/auth.php';
 require_once __DIR__ . '/../../include/model/user_model.php';
@@ -11,13 +12,13 @@ $db = connect_database();
 if (isset($_SESSION['user_id'])) {
     if (
         isset($_SESSION['admin_flg']) &&
-        (int)$_SESSION['admin_flg'] === 1
+        (int)$_SESSION['admin_flg'] === ADMIN_FLG_ADMIN
     ) {
-        header('Location: admin_products.php');
+        header('Location: ' . PAGE_ADMIN_PRODUCTS);
         exit;
     }
 
-    header('Location: products.php');
+    header('Location: ' . PAGE_PRODUCTS);
     exit;
 }
 
@@ -40,13 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
     // ユーザー名チェック
     if (
-        strlen($user_name) < 5 ||
+        strlen($user_name) < USER_NAME_MIN_LENGTH ||
         !preg_match('/^[a-zA-Z0-9_]+$/', $user_name)
     ) {
         $_SESSION['register_error'] =
@@ -54,18 +55,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
     // パスワード文字数チェック
-    if (strlen($password) < 8) {
+    if (strlen($password) < PASSWORD_MIN_LENGTH) {
         $_SESSION['register_error'] =
             'パスワードは8文字以上で入力してください。';
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
@@ -87,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 
@@ -122,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $_SESSION['register_user_name'] = $user_name;
 
-        header('Location: register.php');
+        header('Location: ' . PAGE_REGISTER);
         exit;
     }
 

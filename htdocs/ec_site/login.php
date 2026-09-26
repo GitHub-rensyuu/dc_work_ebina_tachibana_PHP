@@ -10,7 +10,7 @@ $db = connect_database();
 
 // POST以外のアクセスを拒否
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index.php');
+    header('Location: ' . PAGE_INDEX);
     exit;
 }
 
@@ -27,7 +27,7 @@ if ($user_name === '' || $input_password === '') {
     $_SESSION['login_error'] =
         'ユーザー名とパスワードを入力してください。';
 
-    header('Location: index.php');
+    header('Location: ' . PAGE_INDEX);
     exit;
 }
 
@@ -43,7 +43,7 @@ if ($user === false) {
     $_SESSION['login_error'] =
         'ユーザー名とパスワードが一致しません。';
 
-    header('Location: index.php');
+    header('Location: ' . PAGE_INDEX);
     exit;
 }
 
@@ -63,10 +63,10 @@ if ($remember_user_name === 'checked') {
 }
 
 // 権限によって遷移
-if ($_SESSION['admin_flg'] === 1) {
-    header('Location: admin_products.php');
+if ($_SESSION['admin_flg'] === ADMIN_FLG_ADMIN) {
+    header('Location: ' . PAGE_ADMIN_PRODUCTS);
     exit;
 }
 
-header('Location: products.php');
+header('Location: ' . PAGE_PRODUCTS);
 exit;

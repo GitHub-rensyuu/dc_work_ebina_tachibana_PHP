@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../config/const.php';
+
 // 商品一覧を取得
 function show_products($db, $search = '', $sort = ''){
     $sql = '
@@ -18,15 +20,16 @@ function show_products($db, $search = '', $sort = ''){
         WHERE p.product_name LIKE ?
     ';
 
-    if ($sort === 'price_asc') {
+    if ($sort === PRODUCT_SORT_PRICE_ASC) {
         $sql .= ' ORDER BY p.price ASC';
-    } elseif ($sort === 'price_desc') {
+    } elseif ($sort === PRODUCT_SORT_PRICE_DESC) {
         $sql .= ' ORDER BY p.price DESC';
-    } elseif ($sort === 'newest') {
+    } elseif ($sort === PRODUCT_SORT_NEWEST) {
         $sql .= ' ORDER BY p.product_id DESC';
-    } else {
+    } elseif ($sort === PRODUCT_SORT_OLDEST) {
         $sql .= ' ORDER BY p.product_id ASC';
     }
+
 
     $stmt = $db->prepare($sql);
 
@@ -67,7 +70,7 @@ function add_cart($db, $user_id, $product_id){
 
     
     // 非公開の商品は追加できない   
-    if ((int)$product['public_flg'] !== 1) {
+    if ((int)$product['public_flg'] !== PRODUCT_PUBLIC_FLG_PUBLIC) {
         return 'この商品は現在購入できません。';
     }
 

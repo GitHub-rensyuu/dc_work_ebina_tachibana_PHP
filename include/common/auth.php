@@ -1,13 +1,16 @@
 <?php
 
+require_once __DIR__ . '/../config/const.php';
+
 
 // ログイン済みか確認
 function require_login(){
     if (!isset($_SESSION['user_id'])) {
-        header('Location: index.php');
+        header('Location: ' . PAGE_INDEX);
         exit;
     }
 }
+
 
 // 一般ユーザーか確認
 function require_user(){
@@ -15,12 +18,13 @@ function require_user(){
 
     if (
         isset($_SESSION['admin_flg']) &&
-        (int)$_SESSION['admin_flg'] === 1
+        (int)$_SESSION['admin_flg'] === ADMIN_FLG_ADMIN
     ) {
-        header('Location: admin_products.php');
+        header('Location: ' . PAGE_ADMIN_PRODUCTS);
         exit;
     }
 }
+
 
 // 管理者か確認
 function require_admin(){
@@ -28,9 +32,9 @@ function require_admin(){
 
     if (
         !isset($_SESSION['admin_flg']) ||
-        (int)$_SESSION['admin_flg'] !== 1
+        (int)$_SESSION['admin_flg'] !== ADMIN_FLG_ADMIN
     ) {
-        header('Location: products.php');
+        header('Location: ' . PAGE_PRODUCTS);
         exit;
     }
 }
@@ -59,7 +63,7 @@ function logout(){
 
     session_destroy();
 
-    header('Location: index.php');
+    header('Location: ' . PAGE_INDEX);
     exit;
 }
 
