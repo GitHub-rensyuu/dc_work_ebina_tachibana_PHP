@@ -31,9 +31,6 @@ caption {
     background-color: #ddd;
 }
 
-.message-area {
-    height: 24px;
-}
 
 .message-error {
     margin: 0;
@@ -57,4 +54,37 @@ caption {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+/* 商品登録フォーム */
+.register-form {
+    margin-bottom: 0;
+}
+
+/* メッセージ表示領域 */
+.message-area {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+/* エラーメッセージ */
+.message-error {
+    padding: 10px 15px;
+    background-color: #fdecea;
+    border: 1px solid #f5c2c0;
+    border-radius: 4px;
+}
+
+/* 成功メッセージ */
+.message-success {
+    padding: 10px 15px;
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 4px;
+}
+
+/* ログアウトフォーム */
+.logout-form {
+    margin-top: 20px;
+    margin-bottom: 25px;
 }

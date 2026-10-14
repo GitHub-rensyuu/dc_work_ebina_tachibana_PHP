@@ -79,15 +79,6 @@ td:nth-child(2) {
     font-weight: bold;
 }
 
-.cart-error {
-    width: 800px;
-    margin: 20px auto;
-    text-align: center;
-    color: red;
-    font-size: 18px;
-    font-weight: bold;
-}
-
 .total {
     width: 800px;
     margin: 20px auto 0;

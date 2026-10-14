@@ -153,6 +153,7 @@ unset($_SESSION['register_user_name']);
     <title>ユーザー登録</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/register.css">
+    <link rel="stylesheet" href="css/message.css">
 </head>
 
 <body>
@@ -164,7 +165,7 @@ unset($_SESSION['register_user_name']);
     <h1>ユーザー登録</h1>
 
     <?php if ($register_error !== ''): ?>
-        <div class="register-error">
+        <div class="message-error">
             <?= htmlspecialchars(
                 $register_error,
                 ENT_QUOTES,
@@ -188,27 +189,19 @@ unset($_SESSION['register_user_name']);
         <div class="form-row">
             <label for="user_name">ユーザー名</label>
 
-            <input
-                type="text"
-                id="user_name"
-                name="user_name"
-                value="<?= htmlspecialchars(
-                    $user_name,
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>"
-                autocomplete="username"
+            <input type="text" id="user_name" name="user_name" required
+             minlength="5" pattern="[A-Za-z0-9_]+" 
+             value="<?= htmlspecialchars($user_name,ENT_QUOTES,'UTF-8') ?>"
+             autocomplete="username"
             >
         </div>
 
         <div class="form-row">
             <label for="password">パスワード</label>
 
-            <input
-                type="password"
-                id="password"
-                name="password"
-                autocomplete="new-password"
+            <input type="password" id="password" name="password" required
+             minlength="8" pattern="[A-Za-z0-9_]+"
+             autocomplete="new-password"
             >
         </div>
 

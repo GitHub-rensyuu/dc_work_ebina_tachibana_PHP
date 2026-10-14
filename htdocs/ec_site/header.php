@@ -21,6 +21,9 @@
             </a>
 
             <form action="logout.php" method="post">
+                <input type="hidden" name="csrf_token"
+                value="<?= htmlspecialchars(get_csrf_token(), ENT_QUOTES, 'UTF-8') ?>"
+                >
                 <input
                     type="submit"
                     value="ログアウト"

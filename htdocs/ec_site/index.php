@@ -48,6 +48,7 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
     <title>ログインページ（トップページ）</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/message.css">
 </head>
 
 <body>
@@ -59,7 +60,7 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
     <h1>ログイン</h1>
 
     <?php if ($login_error !== ''): ?>
-        <div class="login-error">
+        <div class="message-error">
             <?= htmlspecialchars(
                 $login_error,
                 ENT_QUOTES,

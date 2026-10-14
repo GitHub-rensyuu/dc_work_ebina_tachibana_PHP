@@ -105,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $e instanceof RuntimeException
                     ? $e->getMessage()
                     : '購入処理に失敗しました。';
+            $_SESSION['cart_message_type'] = 'error';
 
             header('Location: cart.php');
             exit;
@@ -142,10 +143,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // エラーの場合はメッセージを保存
         if ($result !== true) {
             $_SESSION['cart_error'] = $result;
+            $_SESSION['cart_message_type'] = 'error';
+        } else {
+            $_SESSION['cart_message'] = '個数を変更しました。';
+            $_SESSION['cart_message_type'] = 'success';
         }
+
     } else {
         $_SESSION['cart_error'] =
             '個数には1以上の整数を指定してください。';
+        $_SESSION['cart_message_type'] = 'error';
     }
 
     header('Location: cart.php');
@@ -186,7 +193,11 @@ $cart_items = show_cart(
 
 // エラーメッセージ取得
 $cart_error = $_SESSION['cart_error'] ?? '';
+$cart_message = $_SESSION['cart_message'] ?? '';
+$cart_message_type = $_SESSION['cart_message_type'] ?? '';
 unset($_SESSION['cart_error']);
+unset($_SESSION['cart_message']);
+unset($_SESSION['cart_message_type']);
 
 // View読み込み
 include_once __DIR__ . '/../../include/view/cart_view.php';

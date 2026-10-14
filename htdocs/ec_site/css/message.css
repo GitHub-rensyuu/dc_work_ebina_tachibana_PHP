@@ -1,0 +1,25 @@
+/* メッセージ表示領域 */
+.message-area {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+/* 共通エラーメッセージ */
+.message-error {
+    margin: 0;
+    padding: 10px 15px;
+    color: red;
+    background-color: #fdecea;
+    border: 1px solid #f5c2c0;
+    border-radius: 4px;
+}
+
+/* 共通成功メッセージ */
+.message-success {
+    margin: 0;
+    padding: 10px 15px;
+    color: blue;
+    background-color: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 4px;
+}

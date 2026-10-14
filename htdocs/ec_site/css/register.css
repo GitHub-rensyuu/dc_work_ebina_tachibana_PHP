@@ -13,12 +13,6 @@ h1 {
     margin-bottom: 30px;
 }
 
-.register-error {
-    margin-bottom: 20px;
-    color: #d00;
-    font-weight: bold;
-}
-
 form {
     width: 100%;
 }

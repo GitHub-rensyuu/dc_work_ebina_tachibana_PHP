@@ -6,6 +6,7 @@
     <title>カート</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/cart_view.css">
+    <link rel="stylesheet" href="css/message.css">
 </head>
 
 <body>
@@ -16,15 +17,29 @@
 
     <h1>カート</h1>
 
-    <?php if (!empty($cart_error)): ?>
+    <?php if ($cart_error !== ''): ?>
 
-        <p class="cart-error">
-            <?= htmlspecialchars(
-                $cart_error,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>
-        </p>
+        <div class="message-area">
+            <p class="message-error">
+                <?= htmlspecialchars(
+                    $cart_error,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </p>
+        </div>
+
+    <?php elseif ($cart_message !== ''): ?>
+
+        <div class="message-area">
+            <p class="message-success">
+                <?= htmlspecialchars(
+                    $cart_message,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </p>
+        </div>
 
     <?php endif; ?>
 

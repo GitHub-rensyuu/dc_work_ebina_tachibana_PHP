@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>商品管理ページ</title>
     <link rel="stylesheet" href="css/admin_products_view.css">
+    <link rel="stylesheet" href="css/message.css">
 </head>
 
 <body>
     <h1>商品登録</h1>
 
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="register-form">
         <input
             type="hidden"
             name="csrf_token"
@@ -54,7 +55,7 @@
     <?php if ($message_type === 'register'): ?>
 
         <div class="message-area">
-            <?php if (!empty($error)): ?>
+            <?php if ($error !== ''): ?>
 
                 <p class="message-error">
                     <?= htmlspecialchars(
@@ -64,7 +65,7 @@
                     ) ?>
                 </p>
 
-            <?php elseif (!empty($message)): ?>
+            <?php elseif ($message !== ''): ?>
 
                 <p class="message-success">
                     <?= htmlspecialchars(
@@ -80,7 +81,7 @@
     <?php endif; ?>
 
     <!-- ログアウト -->
-    <form action="admin_products.php" method="post">
+    <form action="admin_products.php" method="post" class="logout-form">
         <input
             type="hidden"
             name="csrf_token"
