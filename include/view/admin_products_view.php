@@ -7,6 +7,31 @@
     <link rel="stylesheet" href="css/message.css">
 </head>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.register-form');
+        const imageInput = document.getElementById('product_image');
+
+        form.addEventListener('submit', function (event) {
+            // 画像が未選択の場合
+            if (imageInput.files.length === 0) {
+                alert('商品画像を選択してください。');
+                event.preventDefault();
+                return;
+            }
+
+            // JPG・PNG形式か確認
+            const file = imageInput.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png'];
+
+            if (!allowedTypes.includes(file.type)) {
+                alert('商品画像はJPGまたはPNG形式を選択してください。');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
 <body>
     <h1>商品登録</h1>
 
@@ -22,22 +47,24 @@
         >
 
         商品名:
-        <input type="text" name="product_name">
+        <input type="text" name="product_name" required>
         <br>
 
         価格:
-        <input type="number" name="price">
+        <input type="number" name="price" min="0" required>
         <br>
 
         在庫数:
-        <input type="number" name="stock_qty">
+        <input type="number" name="stock_qty" min="0" required>
         <br>
 
         商品画像:
         <input
             type="file"
+            id="product_image"
             name="product_image"
             accept="image/jpeg,image/png"
+            required
         >
         <br>
 

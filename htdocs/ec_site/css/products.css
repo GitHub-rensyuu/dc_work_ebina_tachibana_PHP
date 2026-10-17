@@ -36,6 +36,7 @@
 
 /* 商品画像部分 */
 .image-wrapper {
+    position: relative;
     width: 160px;
     height: 120px;
 
@@ -105,11 +106,6 @@
     background-color: #ddd;
 }
 
-/* カートメッセージ */
-.cart-message {
-    color: blue;
-}
-
 .section-divider {
     border: 0;
     border-top: 1px solid #bbb;
@@ -140,7 +136,6 @@
 /* 売り切れ表示 */
 .sold-out-label {
     position: absolute;
-
     top: 50%;
     left: 50%;
 
@@ -153,7 +148,6 @@
 
     font-weight: bold;
 }
-
 
 /* 売り切れ商品 */
 .sold-out {

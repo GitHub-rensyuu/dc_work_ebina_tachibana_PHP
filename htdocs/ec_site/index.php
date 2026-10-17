@@ -70,12 +70,14 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
     <?php endif; ?>
 
     <?php if ($register_success !== ''): ?>
-        <div class="register-success">
-            <?= htmlspecialchars(
-                $register_success,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>
+        <div class="message-area">
+            <p class="message-success">
+                <?= htmlspecialchars(
+                    $register_success,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </p>
         </div>
     <?php endif; ?>
 
@@ -103,6 +105,9 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
                     ENT_QUOTES,
                     'UTF-8'
                 ) ?>"
+                required
+                minlength="5"
+                pattern="[A-Za-z0-9_]+"
                 autocomplete="username"
             >
         </div>
@@ -114,6 +119,9 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
                 type="password"
                 id="password"
                 name="password"
+                required
+                minlength="8"
+                pattern="[A-Za-z0-9_]+"
                 autocomplete="current-password"
             >
         </div>

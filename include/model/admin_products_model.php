@@ -288,15 +288,15 @@ function update_stock($db,$product_id,$stock_qty) {
         ]);
 
         if ($stmt->rowCount() === 0) {
-            return '在庫数の変更がありませんでした。';
+            return ['', '在庫数の変更がありませんでした。'];
         }
 
-        return '在庫数を変更しました。';
+        return ['在庫数を変更しました。', ''];
 
     } catch (Throwable $e) {
         error_log($e->getMessage());
 
-        return '在庫数の変更に失敗しました。';
+        return ['', '在庫数の変更に失敗しました。'];
     }
 }
 
@@ -320,15 +320,15 @@ function update_price($db,$product_id,$price) {
         ]);
 
         if ($stmt->rowCount() === 0) {
-            return '価格の変更がありませんでした。';
+            return ['','価格の変更がありませんでした。'];
         }
 
-        return '価格を変更しました。';
+        return ['価格を変更しました。',''];
 
     } catch (Throwable $e) {
         error_log($e->getMessage());
 
-        return '価格の変更に失敗しました。';
+        return ['','価格の変更に失敗しました。'];
     }
 }
 
@@ -352,7 +352,7 @@ function update_public($db,$product_id) {
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($product === false) {
-            return '商品が見つかりません。';
+            return ['','商品が見つかりません。'];
         }
 
         // 公開なら非公開、非公開なら公開
@@ -387,12 +387,12 @@ function update_public($db,$product_id) {
             $product_id
         ]);
 
-        return $message;
+        return [$message,''];
 
     } catch (Throwable $e) {
         error_log($e->getMessage());
+        return ['','公開状態の変更に失敗しました。'];
 
-        return '公開状態の変更に失敗しました。';
     }
 }
 
@@ -422,7 +422,7 @@ function delete_product($db,$product_id) {
         if ($product === false) {
             $db->rollBack();
 
-            return '商品が見つかりません。';
+             return ['','商品が見つかりません。'];
         }
 
 
@@ -525,8 +525,7 @@ function delete_product($db,$product_id) {
             }
         }
 
-
-        return '商品を削除しました。';
+        return ['商品を削除しました。',''];
 
     } catch (Throwable $e) {
 
@@ -536,9 +535,6 @@ function delete_product($db,$product_id) {
 
         error_log($e->getMessage());
 
-        return '商品の削除に失敗しました。';
+        return ['','商品の削除に失敗しました。'];
     }
 }
-
-
-

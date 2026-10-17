@@ -156,6 +156,37 @@ unset($_SESSION['register_user_name']);
     <link rel="stylesheet" href="css/message.css">
 </head>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const password = document.getElementById('password');
+        const confirmation = document.getElementById(
+            'password_confirmation'
+        );
+
+        function validatePasswordConfirmation() {
+            if (confirmation.value === '') {
+                confirmation.setCustomValidity('');
+            } else if (password.value !== confirmation.value) {
+                confirmation.setCustomValidity(
+                    'パスワードとパスワード確認が一致しません。'
+                );
+            } else {
+                confirmation.setCustomValidity('');
+            }
+        }
+
+        password.addEventListener(
+            'input',
+            validatePasswordConfirmation
+        );
+
+        confirmation.addEventListener(
+            'input',
+            validatePasswordConfirmation
+        );
+    });
+</script>
+
 <body>
 
 <?php require_once __DIR__ . '/header.php'; ?>
@@ -214,6 +245,7 @@ unset($_SESSION['register_user_name']);
                 type="password"
                 id="password_confirmation"
                 name="password_confirmation"
+                required
                 autocomplete="new-password"
             >
         </div>

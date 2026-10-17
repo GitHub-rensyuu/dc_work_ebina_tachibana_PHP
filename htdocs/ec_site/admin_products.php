@@ -68,14 +68,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     '正しい在庫数を入力してください。';
                 $_SESSION['admin_product_message_type'] = 'product';
             } else {
-                $message = update_stock(
-                    $db,
-                    $product_id,
-                    (int)$stock_qty
-                );
 
-                $_SESSION['admin_product_message'] = $message;
+                [$message, $error] = update_stock($db,$product_id,(int)$stock_qty);
+
+                if ($error !== '') {
+                    $_SESSION['admin_product_error'] = $error;
+                } else {
+                    $_SESSION['admin_product_message'] = $message;
+                }
+
                 $_SESSION['admin_product_message_type'] = 'product';
+
             }
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
@@ -98,14 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     '正しい価格を入力してください。';
                 $_SESSION['admin_product_message_type'] = 'product';
             } else {
-                $message = update_price(
-                    $db,
-                    $product_id,
-                    (int)$price
-                );
+                [$message, $error] = update_price($db,$product_id,(int)$price);
 
-                $_SESSION['admin_product_message'] = $message;
+                if ($error !== '') {
+                    $_SESSION['admin_product_error'] = $error;
+                } else {
+                    $_SESSION['admin_product_message'] = $message;
+                }
+
                 $_SESSION['admin_product_message_type'] = 'product';
+
             }
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
@@ -115,9 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['product_id'])) {
             $product_id = (int)$_POST['product_id'];
 
-            $_SESSION['admin_product_message'] =
-                update_public($db, $product_id);
+            [$message, $error] = update_public($db,$product_id);
+
+            if ($error !== '') {
+                $_SESSION['admin_product_error'] = $error;
+            } else {
+                $_SESSION['admin_product_message'] = $message;
+            }
+
             $_SESSION['admin_product_message_type'] = 'product';
+
+
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
             $_SESSION['admin_product_message_type'] = 'product';
@@ -126,9 +139,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['product_id'])) {
             $product_id = (int)$_POST['product_id'];
 
-            $_SESSION['admin_product_message'] =
-                delete_product($db, $product_id);
+            [$message, $error] = delete_product($db,$product_id);
+
+            if ($error !== '') {
+                $_SESSION['admin_product_error'] = $error;
+            } else {
+                $_SESSION['admin_product_message'] = $message;
+            }
+
             $_SESSION['admin_product_message_type'] = 'product';
+
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
             $_SESSION['admin_product_message_type'] = 'product';
