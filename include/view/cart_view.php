@@ -234,7 +234,6 @@
             </button>
         </form>
 
-        
     <?php endif; ?>
     <div class="cart-bottom">
         <a href="products.php">商品一覧へ戻る</a>

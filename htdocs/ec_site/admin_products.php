@@ -69,7 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['admin_product_message_type'] = 'product';
             } else {
 
-                [$message, $error] = update_stock($db,$product_id,(int)$stock_qty);
+                [$message, $error] = update_stock(
+                    $db,
+                    $product_id,
+                    (int)$stock_qty
+                );
 
                 if ($error !== '') {
                     $_SESSION['admin_product_error'] = $error;
@@ -101,7 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     '正しい価格を入力してください。';
                 $_SESSION['admin_product_message_type'] = 'product';
             } else {
-                [$message, $error] = update_price($db,$product_id,(int)$price);
+                [$message, $error] = update_price(
+                    $db,
+                    $product_id,
+                    (int)$price
+                );
 
                 if ($error !== '') {
                     $_SESSION['admin_product_error'] = $error;
@@ -120,7 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['product_id'])) {
             $product_id = (int)$_POST['product_id'];
 
-            [$message, $error] = update_public($db,$product_id);
+            [$message, $error] = update_public(
+                $db,
+                $product_id
+            );
 
             if ($error !== '') {
                 $_SESSION['admin_product_error'] = $error;
@@ -139,7 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['product_id'])) {
             $product_id = (int)$_POST['product_id'];
 
-            [$message, $error] = delete_product($db,$product_id);
+            [$message, $error] = delete_product(
+                $db,
+                $product_id
+            );
 
             if ($error !== '') {
                 $_SESSION['admin_product_error'] = $error;

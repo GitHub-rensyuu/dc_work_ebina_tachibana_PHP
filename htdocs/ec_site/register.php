@@ -30,6 +30,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $password_confirmation = $_POST['password_confirmation'] ?? '';
 
+    // 入力値の型チェック
+    if (
+        !is_string($user_name) ||
+        !is_string($password) ||
+        !is_string($password_confirmation)
+    ) {
+        $_SESSION['register_error'] =
+            '入力内容が正しくありません。';
+
+        header('Location: ' . PAGE_REGISTER);
+        exit;
+    }
+
     // 必須チェック
     if (
         $user_name === '' ||

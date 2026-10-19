@@ -7,35 +7,10 @@
     <link rel="stylesheet" href="css/message.css">
 </head>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('.register-form');
-        const imageInput = document.getElementById('product_image');
-
-        form.addEventListener('submit', function (event) {
-            // 画像が未選択の場合
-            if (imageInput.files.length === 0) {
-                alert('商品画像を選択してください。');
-                event.preventDefault();
-                return;
-            }
-
-            // JPG・PNG形式か確認
-            const file = imageInput.files[0];
-            const allowedTypes = ['image/jpeg', 'image/png'];
-
-            if (!allowedTypes.includes(file.type)) {
-                alert('商品画像はJPGまたはPNG形式を選択してください。');
-                event.preventDefault();
-            }
-        });
-    });
-</script>
-
 <body>
     <h1>商品登録</h1>
 
-    <form method="post" enctype="multipart/form-data" class="register-form">
+    <form method="post" enctype="multipart/form-data" class="register-form" novalidate>
         <input
             type="hidden"
             name="csrf_token"
@@ -51,11 +26,11 @@
         <br>
 
         価格:
-        <input type="number" name="price" min="0" required>
+        <input type="number" name="price" min="0" step="1" required>
         <br>
 
         在庫数:
-        <input type="number" name="stock_qty" min="0" required>
+        <input type="number" name="stock_qty" min="0" step="1" required>
         <br>
 
         商品画像:
@@ -74,6 +49,10 @@
             <option value="0">非公開</option>
         </select>
         <br>
+
+        <!-- フロントエンドのエラー表示 -->
+        <p id="product-validation-error" class="message-error" role="alert" hidden>
+        </p>
 
         <input type="submit" name="register" value="商品を登録">
     </form>
@@ -128,9 +107,9 @@
     <?php if ($message_type === 'product'): ?>
 
         <div class="message-area">
-            <?php if (!empty($error)): ?>
+            <?php if ($error !== ''): ?>
 
-                <p class="message-error">
+                <p class="message-error" role="alert">
                     <?= htmlspecialchars(
                         $error,
                         ENT_QUOTES,
@@ -138,7 +117,7 @@
                     ) ?>
                 </p>
 
-            <?php elseif (!empty($message)): ?>
+            <?php elseif ($message !== ''): ?>
 
                 <p class="message-success">
                     <?= htmlspecialchars(
@@ -218,11 +197,7 @@
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= htmlspecialchars(
-                                    $product['product_id'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['product_id'] ?>"
                             >
 
                             <span>¥</span>
@@ -230,11 +205,7 @@
                             <input
                                 type="number"
                                 name="price"
-                                value="<?= htmlspecialchars(
-                                    $product['price'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['price'] ?>"
                                 min="0"
                             >
 
@@ -261,22 +232,16 @@
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= htmlspecialchars(
-                                    $product['product_id'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['product_id'] ?>"
                             >
 
                             <input
                                 type="number"
                                 name="stock_qty"
-                                value="<?= htmlspecialchars(
-                                    $product['stock_qty'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['stock_qty'] ?>"
                                 min="0"
+                                step="1"
+                                formnovalidate
                             >
 
                             <input
@@ -302,11 +267,7 @@
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= htmlspecialchars(
-                                    $product['product_id'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['product_id'] ?>"
                             >
 
                             <?php if ((int)$product['public_flg'] === 1): ?>
@@ -344,11 +305,7 @@
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= htmlspecialchars(
-                                    $product['product_id'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                value="<?= (int)$product['product_id'] ?>"
                             >
 
                             <input
@@ -364,5 +321,71 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('.register-form');
+            const imageInput = document.getElementById('product_image');
+            const errorArea = document.getElementById('product-validation-error');
+
+            form.addEventListener('submit', function (event) {
+                errorArea.textContent = '';
+                errorArea.hidden = true;
+
+                // HTML標準の入力チェック
+                // 必須項目の入力チェック
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+
+                    if (!form.product_name.value.trim()) {
+                        showError('商品名を入力してください。');
+                    } else if (form.price.value === '') {
+                        showError('価格を入力してください。');
+                    } else if (
+                        form.price.validity.badInput ||
+                        form.price.validity.rangeUnderflow ||
+                        !form.price.validity.valid
+                    ) {
+                        showError('正しい価格を入力してください。');
+                    } else if (form.stock_qty.value === '') {
+                        showError('在庫数を入力してください。');
+                    } else if (
+                        form.stock_qty.validity.badInput ||
+                        form.stock_qty.validity.rangeUnderflow ||
+                        !form.stock_qty.validity.valid
+                    ) {
+                        showError('正しい在庫数を入力してください。');
+                    } else if (imageInput.files.length === 0) {
+                        showError('商品画像を選択してください。');
+                    }
+
+                    return;
+                }
+
+                // 商品画像の確認
+                if (imageInput.files.length === 0) {
+                    event.preventDefault();
+                    showError('商品画像を選択してください。');
+                    return;
+                }
+
+                const file = imageInput.files[0];
+                const allowedTypes = ['image/jpeg', 'image/png'];
+
+                if (!allowedTypes.includes(file.type)) {
+                    event.preventDefault();
+                    showError(
+                        '商品画像はJPGまたはPNG形式を選択してください。'
+                    );
+                }
+            });
+
+            function showError(message) {
+                errorArea.textContent = message;
+                errorArea.hidden = false;
+            }
+        });
+    </script>
+
 </body>
 </html>

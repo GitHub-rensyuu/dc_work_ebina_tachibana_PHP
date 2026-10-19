@@ -9,9 +9,9 @@
 </head>
 
 <body>
-    <?php	
-        $show_header_menu = true;	
-        require_once __DIR__ . '/../../htdocs/ec_site/header.php';	
+    <?php
+        $show_header_menu = true;
+        require_once __DIR__ . '/../../htdocs/ec_site/header.php';
     ?>
 
     <h1>購入ありがとうございました</h1>

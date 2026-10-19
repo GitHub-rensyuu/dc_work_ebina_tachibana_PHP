@@ -99,17 +99,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->rollBack();
             }
 
-            error_log($e->getMessage());
+            error_log(
+                '購入処理に失敗しました: ' .
+                $e->getMessage()
+            );
 
             $_SESSION['cart_error'] =
-                $e instanceof RuntimeException
-                    ? $e->getMessage()
-                    : '購入処理に失敗しました。';
+                '購入処理に失敗しました。時間をおいて再度お試しください。';
             $_SESSION['cart_message_type'] = 'error';
 
             header('Location: cart.php');
             exit;
         }
+
     }
 
     // 個数変更
@@ -126,13 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             FILTER_VALIDATE_INT
         );
 
-    if (
-        $cart_id !== false &&
-        $cart_id !== null &&
-        $product_qty !== false &&
-        $product_qty !== null &&
-        $product_qty >= CART_MIN_QTY
-    ) {
+        if (
+            $cart_id !== false &&
+            $cart_id !== null &&
+            $product_qty !== false &&
+            $product_qty !== null &&
+            $product_qty >= CART_MIN_QTY
+        ) {
         $result = change_cart_qty(
             $db,
             $user_id,
@@ -168,16 +170,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             FILTER_VALIDATE_INT
         );
 
-        if ($cart_id !== false && $cart_id !== null) {
-            delete_cart(
-                $db,
-                $user_id,
-                $cart_id
-            );
-        }
-
-        header('Location: cart.php');
-        exit;
+    if (
+        $cart_id !== false &&
+        $cart_id !== null &&
+        $cart_id > 0
+    ) {
+        delete_cart(
+            $db,
+            $user_id,
+            $cart_id
+        );
+    } else {
+        $_SESSION['cart_error'] =
+            '商品情報が正しくありません。';
+        $_SESSION['cart_message_type'] = 'error';
     }
 
     // 不正なPOST
