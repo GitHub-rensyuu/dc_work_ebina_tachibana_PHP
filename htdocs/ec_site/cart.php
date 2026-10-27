@@ -18,10 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 購入処理
     if (isset($_POST['purchase'])) {
-        $purchase_items = show_cart(
-            $db,
-            $user_id
-        );
+        $purchase_items = show_cart($db, $user_id);
 
         if (empty($purchase_items)) {
             header('Location: cart.php');
@@ -35,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($purchase_items as $item) {
                 $stmt = $db->prepare(
                     'SELECT public_flg
-                    FROM ec_product
-                    WHERE product_id = ?'
+                     FROM ec_product
+                     WHERE product_id = ?'
                 );
 
                 $stmt->execute([
@@ -51,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ) {
                     throw new RuntimeException(
                         $item['product_name'] .
-                        'は現在購入できません。'
+                            'は現在購入できません。'
                     );
                 }
             }
@@ -67,12 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$result) {
                     throw new RuntimeException(
                         $item['product_name'] .
-                        'の在庫が不足しています。'
+                            'の在庫が不足しています。'
                     );
                 }
             }
 
-
+            // カート商品を削除
             foreach ($purchase_items as $item) {
                 if (
                     !delete_cart(
@@ -89,8 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $db->commit();
 
-            $_SESSION['purchase_items'] =
-                $purchase_items;
+            $_SESSION['purchase_items'] = $purchase_items;
 
             header('Location: complete.php');
             exit;
@@ -101,17 +97,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             error_log(
                 '購入処理に失敗しました: ' .
-                $e->getMessage()
+                    $e->getMessage()
             );
 
-            $_SESSION['cart_error'] =
-                '購入処理に失敗しました。時間をおいて再度お試しください。';
-            $_SESSION['cart_message_type'] = 'error';
+            if (
+                strpos($e->getMessage(), '在庫が不足しています。') !== false ||
+                strpos($e->getMessage(), '現在購入できません。') !== false
+            ) {
+                $_SESSION['cart_error'] = $e->getMessage();
+            } else {
+                // その他のエラーは詳細を隠す
+                $_SESSION['cart_error'] =
+                    '購入処理に失敗しました。時間をおいて再度お試しください。';
+            }
 
             header('Location: cart.php');
             exit;
         }
-
     }
 
     // 個数変更
@@ -131,35 +133,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (
             $cart_id !== false &&
             $cart_id !== null &&
+            $cart_id > 0 &&
             $product_qty !== false &&
             $product_qty !== null &&
             $product_qty >= CART_MIN_QTY
         ) {
-        $result = change_cart_qty(
-            $db,
-            $user_id,
-            $cart_id,
-            $product_qty
-        );
+            $result = change_cart_qty(
+                $db,
+                $user_id,
+                $cart_id,
+                $product_qty
+            );
 
-        // エラーの場合はメッセージを保存
-        if ($result !== true) {
-            $_SESSION['cart_error'] = $result;
-            $_SESSION['cart_message_type'] = 'error';
+            // エラーの場合はメッセージを保存
+            if ($result !== true) {
+                $_SESSION['cart_error'] = $result;
+                $_SESSION['cart_message_type'] = 'error';
+            } else {
+                $_SESSION['cart_message'] = '個数を変更しました。';
+                $_SESSION['cart_message_type'] = 'success';
+            }
         } else {
-            $_SESSION['cart_message'] = '個数を変更しました。';
-            $_SESSION['cart_message_type'] = 'success';
+            $_SESSION['cart_error'] =
+                '個数には1以上の整数を指定してください。';
+            $_SESSION['cart_message_type'] = 'error';
         }
 
-    } else {
-        $_SESSION['cart_error'] =
-            '個数には1以上の整数を指定してください。';
-        $_SESSION['cart_message_type'] = 'error';
-    }
-
-    header('Location: cart.php');
-    exit;
-
+        header('Location: cart.php');
+        exit;
     }
 
     // 商品削除
@@ -170,20 +171,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             FILTER_VALIDATE_INT
         );
 
-    if (
-        $cart_id !== false &&
-        $cart_id !== null &&
-        $cart_id > 0
-    ) {
-        delete_cart(
-            $db,
-            $user_id,
-            $cart_id
-        );
-    } else {
-        $_SESSION['cart_error'] =
-            '商品情報が正しくありません。';
-        $_SESSION['cart_message_type'] = 'error';
+        if (
+            $cart_id !== false &&
+            $cart_id !== null &&
+            $cart_id > 0
+        ) {
+            $result = delete_cart(
+                $db,
+                $user_id,
+                $cart_id
+            );
+
+            if (!$result) {
+                $_SESSION['cart_error'] =
+                    '商品の削除に失敗しました。';
+                $_SESSION['cart_message_type'] = 'error';
+            } else {
+                $_SESSION['cart_message'] =
+                    '商品を削除しました。';
+                $_SESSION['cart_message_type'] = 'success';
+            }
+        } else {
+            $_SESSION['cart_error'] =
+                '商品情報が正しくありません。';
+            $_SESSION['cart_message_type'] = 'error';
+        }
+
+        header('Location: cart.php');
+        exit;
     }
 
     // 不正なPOST

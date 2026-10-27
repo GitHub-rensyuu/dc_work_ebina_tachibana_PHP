@@ -53,106 +53,102 @@ $user_name = $_COOKIE[COOKIE_USER_NAME] ?? '';
 
 <body>
 
-<?php require_once __DIR__ . '/header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
-<div class="container">
+    <div class="container">
 
-    <h1>ログイン</h1>
+        <h1>ログイン</h1>
 
-    <?php if ($login_error !== ''): ?>
-        <div class="message-error">
-            <?= htmlspecialchars(
-                $login_error,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if ($register_success !== ''): ?>
-        <div class="message-area">
-            <p class="message-success">
+        <?php if ($login_error !== ''): ?>
+            <div class="message-error">
                 <?= htmlspecialchars(
-                    $register_success,
+                    $login_error,
                     ENT_QUOTES,
                     'UTF-8'
                 ) ?>
-            </p>
-        </div>
-    <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
-    <form action="login.php" method="post">
+        <?php if ($register_success !== ''): ?>
+            <div class="message-area">
+                <p class="message-success">
+                    <?= htmlspecialchars(
+                        $register_success,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+                </p>
+            </div>
+        <?php endif; ?>
 
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= htmlspecialchars(
-                get_csrf_token(),
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-        >
-
-        <div class="form-row">
-            <label for="user_name">ユーザー名</label>
+        <form action="login.php" method="post">
 
             <input
-                type="text"
-                id="user_name"
-                name="user_name"
+                type="hidden"
+                name="csrf_token"
                 value="<?= htmlspecialchars(
-                    $user_name,
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>"
-                required
-                minlength="5"
-                pattern="[A-Za-z0-9_]+"
-                autocomplete="username"
-            >
-        </div>
+                            get_csrf_token(),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>">
 
-        <div class="form-row">
-            <label for="password">パスワード</label>
+            <div class="form-row">
+                <label for="user_name">ユーザー名</label>
+
+                <input
+                    type="text"
+                    id="user_name"
+                    name="user_name"
+                    value="<?= htmlspecialchars(
+                                $user_name,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                    required
+                    minlength="5"
+                    pattern="[A-Za-z0-9_]+"
+                    autocomplete="username">
+            </div>
+
+            <div class="form-row">
+                <label for="password">パスワード</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    minlength="8"
+                    pattern="[A-Za-z0-9_]+"
+                    autocomplete="current-password">
+            </div>
+
+            <div class="cookie-check">
+                <input
+                    type="checkbox"
+                    id="remember_user_name"
+                    name="remember_user_name"
+                    value="checked"
+                    <?= $remember_user_name ?>>
+
+                <label for="remember_user_name">
+                    次回からユーザー名の入力を省略する
+                </label>
+            </div>
 
             <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                minlength="8"
-                pattern="[A-Za-z0-9_]+"
-                autocomplete="current-password"
-            >
-        </div>
+                type="submit"
+                value="ログイン"
+                class="login-button">
 
-        <div class="cookie-check">
-            <input
-                type="checkbox"
-                id="remember_user_name"
-                name="remember_user_name"
-                value="checked"
-                <?= $remember_user_name ?>
-            >
+        </form>
 
-            <label for="remember_user_name">
-                次回からユーザー名の入力を省略する
-            </label>
-        </div>
+        <a href="register.php" class="register-link">
+            新規登録ページへ
+        </a>
 
-        <input
-            type="submit"
-            value="ログイン"
-            class="login-button"
-        >
-
-    </form>
-
-    <a href="register.php" class="register-link">
-        新規登録ページへ
-    </a>
-
-</div>
+    </div>
 
 </body>
+
 </html>

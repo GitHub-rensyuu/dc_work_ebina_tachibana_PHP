@@ -170,7 +170,7 @@ unset($_SESSION['register_user_name']);
 </head>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('password');
         const confirmation = document.getElementById(
             'password_confirmation'
@@ -202,80 +202,76 @@ unset($_SESSION['register_user_name']);
 
 <body>
 
-<?php require_once __DIR__ . '/header.php'; ?>
+    <?php require_once __DIR__ . '/header.php'; ?>
 
-<div class="container">
+    <div class="container">
 
-    <h1>ユーザー登録</h1>
+        <h1>ユーザー登録</h1>
 
-    <?php if ($register_error !== ''): ?>
-        <div class="message-error">
-            <?= htmlspecialchars(
-                $register_error,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>
-        </div>
-    <?php endif; ?>
+        <?php if ($register_error !== ''): ?>
+            <div class="message-error">
+                <?= htmlspecialchars(
+                    $register_error,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </div>
+        <?php endif; ?>
 
-    <form action="register.php" method="post">
-
-        <input
-            type="hidden"
-            name="csrf_token"
-            value="<?= htmlspecialchars(
-                get_csrf_token(),
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-        >
-
-        <div class="form-row">
-            <label for="user_name">ユーザー名</label>
-
-            <input type="text" id="user_name" name="user_name" required
-             minlength="5" pattern="[A-Za-z0-9_]+" 
-             value="<?= htmlspecialchars($user_name,ENT_QUOTES,'UTF-8') ?>"
-             autocomplete="username"
-            >
-        </div>
-
-        <div class="form-row">
-            <label for="password">パスワード</label>
-
-            <input type="password" id="password" name="password" required
-             minlength="8" pattern="[A-Za-z0-9_]+"
-             autocomplete="new-password"
-            >
-        </div>
-
-        <div class="form-row">
-            <label for="password_confirmation">
-                パスワード確認
-            </label>
+        <form action="register.php" method="post">
 
             <input
-                type="password"
-                id="password_confirmation"
-                name="password_confirmation"
-                required
-                autocomplete="new-password"
-            >
-        </div>
+                type="hidden"
+                name="csrf_token"
+                value="<?= htmlspecialchars(
+                            get_csrf_token(),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>">
 
-        <input
-            type="submit"
-            value="新規登録"
-            class="register-button"
-        >
+            <div class="form-row">
+                <label for="user_name">ユーザー名</label>
 
-    </form>
+                <input type="text" id="user_name" name="user_name" required
+                    minlength="5" pattern="[A-Za-z0-9_]+"
+                    value="<?= htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8') ?>"
+                    autocomplete="username">
+            </div>
 
-    <a href="index.php" class="login-link">
-        ログインページへ
-    </a>
+            <div class="form-row">
+                <label for="password">パスワード</label>
 
-</div>
+                <input type="password" id="password" name="password" required
+                    minlength="8" pattern="[A-Za-z0-9_]+"
+                    autocomplete="new-password">
+            </div>
+
+            <div class="form-row">
+                <label for="password_confirmation">
+                    パスワード確認
+                </label>
+
+                <input
+                    type="password"
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    required
+                    autocomplete="new-password">
+            </div>
+
+            <input
+                type="submit"
+                value="新規登録"
+                class="register-button">
+
+        </form>
+
+        <a href="index.php" class="login-link">
+            ログインページへ
+        </a>
+
+    </div>
 
 </body>
+
 </html>

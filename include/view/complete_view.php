@@ -10,8 +10,8 @@
 
 <body>
     <?php
-        $show_header_menu = true;
-        require_once __DIR__ . '/../../htdocs/ec_site/header.php';
+    $show_header_menu = true;
+    require_once __DIR__ . '/../../htdocs/ec_site/header.php';
     ?>
 
     <h1>購入ありがとうございました</h1>
@@ -60,16 +60,15 @@
 
                                     <img
                                         src="img/<?= htmlspecialchars(
-                                            $item['image_name'],
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>"
+                                                        $item['image_name'],
+                                                        ENT_QUOTES,
+                                                        'UTF-8'
+                                                    ) ?>"
                                         alt="<?= htmlspecialchars(
-                                            $item['product_name'],
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>"
-                                    >
+                                                    $item['product_name'],
+                                                    ENT_QUOTES,
+                                                    'UTF-8'
+                                                ) ?>">
 
                                 <?php else: ?>
 
@@ -94,8 +93,8 @@
                         <!-- 価格 -->
                         <td>
                             ¥ <?= number_format(
-                                (int)$item['price']
-                            ) ?>
+                                    (int)$item['price']
+                                ) ?>
                         </td>
 
                         <!-- 個数 -->

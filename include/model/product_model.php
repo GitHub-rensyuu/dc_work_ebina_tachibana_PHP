@@ -3,7 +3,8 @@
 require_once __DIR__ . '/../config/const.php';
 
 // 商品一覧を取得
-function show_products($db, $search = '', $sort = ''){
+function show_products($db, $search = '', $sort = '')
+{
     $sql = '
         SELECT
             p.product_id,
@@ -43,7 +44,8 @@ function show_products($db, $search = '', $sort = ''){
 
 
 // カートに商品を追加
-function add_cart($db, $user_id, $product_id){
+function add_cart($db, $user_id, $product_id)
+{
 
     // 商品が存在するか確認   
     $sql = '
@@ -68,13 +70,13 @@ function add_cart($db, $user_id, $product_id){
         return '商品が見つかりません。';
     }
 
-    
+
     // 非公開の商品は追加できない   
     if ((int)$product['public_flg'] !== PRODUCT_PUBLIC_FLG_PUBLIC) {
         return 'この商品は現在購入できません。';
     }
 
-    
+
     // 在庫確認    
     $sql = '
         SELECT
@@ -99,7 +101,7 @@ function add_cart($db, $user_id, $product_id){
     }
 
 
-    
+
     // すでにカートに入っているか確認    
     $stmt = $db->prepare(
         'SELECT
@@ -117,7 +119,7 @@ function add_cart($db, $user_id, $product_id){
 
     $cart = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    
+
     // すでにカートにある場合    
     if ($cart !== false) {
 
@@ -143,7 +145,7 @@ function add_cart($db, $user_id, $product_id){
         return 'カートの商品数を1個増やしました。';
     }
 
-    
+
     // カートにない場合  
     $stmt = $db->prepare(
         'INSERT INTO ec_cart(

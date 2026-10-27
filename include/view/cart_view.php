@@ -90,16 +90,15 @@
 
                                     <img
                                         src="img/<?= htmlspecialchars(
-                                            $item['image_name'],
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>"
+                                                        $item['image_name'],
+                                                        ENT_QUOTES,
+                                                        'UTF-8'
+                                                    ) ?>"
                                         alt="<?= htmlspecialchars(
-                                            $item['product_name'],
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>"
-                                    >
+                                                    $item['product_name'],
+                                                    ENT_QUOTES,
+                                                    'UTF-8'
+                                                ) ?>">
 
                                 <?php else: ?>
 
@@ -129,17 +128,15 @@
                                     type="hidden"
                                     name="csrf_token"
                                     value="<?= htmlspecialchars(
-                                        get_csrf_token(),
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>"
-                                >
+                                                get_csrf_token(),
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>">
 
                                 <input
                                     type="hidden"
                                     name="cart_id"
-                                    value="<?= (int)$item['cart_id'] ?>"
-                                >
+                                    value="<?= (int)$item['cart_id'] ?>">
 
                                 <button type="submit" name="delete_cart">
                                     削除する
@@ -158,38 +155,33 @@
                             <form
                                 action="cart.php"
                                 method="post"
-                                class="qty-form"
-                            >
+                                class="qty-form">
 
                                 <input
                                     type="hidden"
                                     name="csrf_token"
                                     value="<?= htmlspecialchars(
-                                        get_csrf_token(),
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>"
-                                >
+                                                get_csrf_token(),
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>">
 
                                 <input
                                     type="hidden"
                                     name="cart_id"
-                                    value="<?= (int)$item['cart_id'] ?>"
-                                >
+                                    value="<?= (int)$item['cart_id'] ?>">
 
                                 <input
                                     type="number"
                                     name="product_qty"
                                     value="<?= (int)$item['product_qty'] ?>"
                                     min="1"
-                                    max="<?= (int)$item['stock_qty'] ?>"
-                                >
+                                    max="<?= (int)$item['stock_qty'] ?>">
 
                                 <input
                                     type="submit"
                                     name="change_qty"
-                                    value="変更する"
-                                >
+                                    value="変更する">
 
                             </form>
                         </td>
@@ -216,18 +208,16 @@
         <form
             action="cart.php"
             method="post"
-            class="purchase-form"
-        >
+            class="purchase-form">
 
             <input
                 type="hidden"
                 name="csrf_token"
                 value="<?= htmlspecialchars(
-                    get_csrf_token(),
-                    ENT_QUOTES,
-                    'UTF-8'
-                ) ?>"
-            >
+                            get_csrf_token(),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>">
 
             <button type="submit" name="purchase">
                 購入する

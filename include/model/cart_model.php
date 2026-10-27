@@ -3,7 +3,8 @@
 require_once __DIR__ . '/../config/const.php';
 
 // カートの商品を取得
-function show_cart($db, $user_id){
+function show_cart($db, $user_id)
+{
     $sql = '
         SELECT
             c.cart_id,
@@ -26,14 +27,15 @@ function show_cart($db, $user_id){
     ';
 
     $stmt = $db->prepare($sql);
-    $stmt->execute([$user_id,PRODUCT_PUBLIC_FLG_PUBLIC]);
+    $stmt->execute([$user_id, PRODUCT_PUBLIC_FLG_PUBLIC]);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 
 // カートの商品を削除
-function delete_cart($db, $user_id, $cart_id){
+function delete_cart($db, $user_id, $cart_id)
+{
     $sql = '
         DELETE FROM ec_cart
         WHERE cart_id = ?
@@ -50,8 +52,9 @@ function delete_cart($db, $user_id, $cart_id){
 
 
 // カートの商品個数を変更
-function change_cart_qty($db,$user_id,$cart_id,$product_qty) {
-    
+function change_cart_qty($db, $user_id, $cart_id, $product_qty)
+{
+
     // カートの商品情報を取得
     $sql = '
         SELECT
@@ -78,13 +81,13 @@ function change_cart_qty($db,$user_id,$cart_id,$product_qty) {
         return 'カートの商品が見つかりません。';
     }
 
-    
+
     // 在庫数を超えていないか確認 
     if ($product_qty > (int)$cart['stock_qty']) {
         return '在庫数を超える個数には変更できません。';
     }
 
-    
+
     // 個数を変更   
     $sql = '
         UPDATE ec_cart
@@ -113,7 +116,8 @@ function change_cart_qty($db,$user_id,$cart_id,$product_qty) {
 
 
 // 在庫を減らす
-function reduce_stock($db,$product_id,$product_qty) {
+function reduce_stock($db, $product_id, $product_qty)
+{
     $sql = '
         UPDATE ec_stock
         SET

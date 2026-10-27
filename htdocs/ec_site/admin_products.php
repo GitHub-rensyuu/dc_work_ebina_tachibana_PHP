@@ -82,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $_SESSION['admin_product_message_type'] = 'product';
-
             }
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
@@ -118,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $_SESSION['admin_product_message_type'] = 'product';
-
             }
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
@@ -140,8 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['admin_product_message_type'] = 'product';
-
-
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
             $_SESSION['admin_product_message_type'] = 'product';
@@ -162,7 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $_SESSION['admin_product_message_type'] = 'product';
-
         } else {
             $_SESSION['admin_product_error'] = 'データが不足しています。';
             $_SESSION['admin_product_message_type'] = 'product';

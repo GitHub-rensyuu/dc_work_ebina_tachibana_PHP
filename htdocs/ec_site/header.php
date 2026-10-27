@@ -1,7 +1,7 @@
 <?php
-    if (!isset($show_header_menu)) {
-        $show_header_menu = false;
-    }
+if (!isset($show_header_menu)) {
+    $show_header_menu = false;
+}
 ?>
 
 <header class="site-header">
@@ -22,12 +22,10 @@
 
             <form action="logout.php" method="post">
                 <input type="hidden" name="csrf_token"
-                    value="<?= htmlspecialchars(get_csrf_token(), ENT_QUOTES, 'UTF-8') ?>"
-                >
+                    value="<?= htmlspecialchars(get_csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                 <input
                     type="submit"
-                    value="ログアウト"
-                >
+                    value="ログアウト">
             </form>
 
         </nav>

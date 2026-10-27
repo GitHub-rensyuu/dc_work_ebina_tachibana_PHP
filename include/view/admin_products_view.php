@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>商品管理ページ</title>
@@ -15,11 +16,10 @@
             type="hidden"
             name="csrf_token"
             value="<?= htmlspecialchars(
-                get_csrf_token(),
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-        >
+                        get_csrf_token(),
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>">
 
         商品名:
         <input type="text" name="product_name" required>
@@ -39,8 +39,7 @@
             id="product_image"
             name="product_image"
             accept="image/jpeg,image/png"
-            required
-        >
+            required>
         <br>
 
         ステータス:
@@ -92,11 +91,10 @@
             type="hidden"
             name="csrf_token"
             value="<?= htmlspecialchars(
-                get_csrf_token(),
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-        >
+                        get_csrf_token(),
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>">
 
         <input type="submit" name="logout" value="ログアウト">
     </form>
@@ -158,14 +156,13 @@
 
                             <img
                                 src="img/<?= htmlspecialchars(
-                                    $product['image_name'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
+                                                $product['image_name'],
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>"
                                 width="200"
                                 height="200"
-                                alt="商品画像"
-                            >
+                                alt="商品画像">
 
                         <?php else: ?>
 
@@ -188,17 +185,15 @@
                                 type="hidden"
                                 name="csrf_token"
                                 value="<?= htmlspecialchars(
-                                    get_csrf_token(),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
-                            >
+                                            get_csrf_token(),
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>">
 
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= (int)$product['product_id'] ?>"
-                            >
+                                value="<?= (int)$product['product_id'] ?>">
 
                             <span>¥</span>
 
@@ -206,14 +201,12 @@
                                 type="number"
                                 name="price"
                                 value="<?= (int)$product['price'] ?>"
-                                min="0"
-                            >
+                                min="0">
 
                             <input
                                 type="submit"
                                 name="change_price"
-                                value="変更する"
-                            >
+                                value="変更する">
                         </form>
                     </td>
 
@@ -223,17 +216,15 @@
                                 type="hidden"
                                 name="csrf_token"
                                 value="<?= htmlspecialchars(
-                                    get_csrf_token(),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
-                            >
+                                            get_csrf_token(),
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>">
 
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= (int)$product['product_id'] ?>"
-                            >
+                                value="<?= (int)$product['product_id'] ?>">
 
                             <input
                                 type="number"
@@ -241,14 +232,12 @@
                                 value="<?= (int)$product['stock_qty'] ?>"
                                 min="0"
                                 step="1"
-                                formnovalidate
-                            >
+                                formnovalidate>
 
                             <input
                                 type="submit"
                                 name="change_stock"
-                                value="変更する"
-                            >
+                                value="変更する">
                         </form>
                     </td>
 
@@ -258,33 +247,29 @@
                                 type="hidden"
                                 name="csrf_token"
                                 value="<?= htmlspecialchars(
-                                    get_csrf_token(),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
-                            >
+                                            get_csrf_token(),
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>">
 
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= (int)$product['product_id'] ?>"
-                            >
+                                value="<?= (int)$product['product_id'] ?>">
 
                             <?php if ((int)$product['public_flg'] === 1): ?>
 
                                 <input
                                     type="submit"
                                     name="change_public"
-                                    value="非表示にする"
-                                >
+                                    value="非表示にする">
 
                             <?php else: ?>
 
                                 <input
                                     type="submit"
                                     name="change_public"
-                                    value="表示する"
-                                >
+                                    value="表示する">
 
                             <?php endif; ?>
                         </form>
@@ -296,23 +281,20 @@
                                 type="hidden"
                                 name="csrf_token"
                                 value="<?= htmlspecialchars(
-                                    get_csrf_token(),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"
-                            >
+                                            get_csrf_token(),
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>">
 
                             <input
                                 type="hidden"
                                 name="product_id"
-                                value="<?= (int)$product['product_id'] ?>"
-                            >
+                                value="<?= (int)$product['product_id'] ?>">
 
                             <input
                                 type="submit"
                                 name="delete_product"
-                                value="削除する"
-                            >
+                                value="削除する">
                         </form>
                     </td>
 
@@ -323,12 +305,12 @@
     </table>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.register-form');
             const imageInput = document.getElementById('product_image');
             const errorArea = document.getElementById('product-validation-error');
 
-            form.addEventListener('submit', function (event) {
+            form.addEventListener('submit', function(event) {
                 errorArea.textContent = '';
                 errorArea.hidden = true;
 
@@ -388,4 +370,5 @@
     </script>
 
 </body>
+
 </html>

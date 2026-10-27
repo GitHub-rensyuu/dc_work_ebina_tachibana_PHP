@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config/const.php';
 
 
 // 商品登録時の入力チェック
-function validate_product_post($product_name,$price,$stock_qty,$public_flg,$file) {
+function validate_product_post($product_name, $price, $stock_qty, $public_flg, $file) {
     $product_name = trim($product_name);
 
     if ($product_name === '') {
@@ -82,7 +82,7 @@ function validate_product_post($product_name,$price,$stock_qty,$public_flg,$file
 
 
 // 商品登録
-function register_product($db,$product_name,$price,$stock_qty,$public_flg,$file) {
+function register_product($db, $product_name, $price, $stock_qty, $public_flg, $file) {
     $image_path = null;
 
     try {
@@ -175,7 +175,7 @@ function register_product($db,$product_name,$price,$stock_qty,$public_flg,$file)
             if (!unlink($image_path)) {
                 error_log(
                     '商品画像の削除に失敗しました: ' .
-                    $image_path
+                        $image_path
                 );
             }
         }
@@ -190,7 +190,7 @@ function register_product($db,$product_name,$price,$stock_qty,$public_flg,$file)
 }
 
 // 商品情報を登録
-function insert_product($db,$product_name,$price,$public_flg) {
+function insert_product($db, $product_name, $price, $public_flg) {
     $sql = '
         INSERT INTO ec_product (
             product_name,
@@ -219,7 +219,7 @@ function insert_product($db,$product_name,$price,$public_flg) {
 
 
 // 在庫情報を登録
-function insert_stock($db,$product_id,$stock_qty) {
+function insert_stock($db, $product_id, $stock_qty) {
     $sql = '
         INSERT INTO ec_stock (
             product_id,
@@ -245,7 +245,7 @@ function insert_stock($db,$product_id,$stock_qty) {
 
 
 // 商品画像情報を登録
-function insert_image($db,$product_id,$image_name) {
+function insert_image($db, $product_id, $image_name) {
     $sql = '
         INSERT INTO ec_image (
             product_id,
@@ -270,7 +270,7 @@ function insert_image($db,$product_id,$image_name) {
 }
 
 // 商品の在庫数を変更
-function update_stock($db,$product_id,$stock_qty) {
+function update_stock($db, $product_id, $stock_qty) {
     try {
         $sql = '
             UPDATE ec_stock
@@ -292,7 +292,6 @@ function update_stock($db,$product_id,$stock_qty) {
         }
 
         return ['在庫数を変更しました。', ''];
-
     } catch (Throwable $e) {
         error_log($e->getMessage());
 
@@ -302,7 +301,7 @@ function update_stock($db,$product_id,$stock_qty) {
 
 
 // 商品の価格を変更
-function update_price($db,$product_id,$price) {
+function update_price($db, $product_id, $price) {
     try {
         $sql = '
             UPDATE ec_product
@@ -320,21 +319,20 @@ function update_price($db,$product_id,$price) {
         ]);
 
         if ($stmt->rowCount() === 0) {
-            return ['','価格の変更がありませんでした。'];
+            return ['', '価格の変更がありませんでした。'];
         }
 
-        return ['価格を変更しました。',''];
-
+        return ['価格を変更しました。', ''];
     } catch (Throwable $e) {
         error_log($e->getMessage());
 
-        return ['','価格の変更に失敗しました。'];
+        return ['', '価格の変更に失敗しました。'];
     }
 }
 
 
 // 商品の公開・非公開を切り替える
-function update_public($db,$product_id) {
+function update_public($db, $product_id) {
     try {
         // 現在の公開状態を取得
         $sql = '
@@ -352,7 +350,7 @@ function update_public($db,$product_id) {
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($product === false) {
-            return ['','商品が見つかりません。'];
+            return ['', '商品が見つかりません。'];
         }
 
         // 公開なら非公開、非公開なら公開
@@ -387,18 +385,16 @@ function update_public($db,$product_id) {
             $product_id
         ]);
 
-        return [$message,''];
-
+        return [$message, ''];
     } catch (Throwable $e) {
         error_log($e->getMessage());
-        return ['','公開状態の変更に失敗しました。'];
-
+        return ['', '公開状態の変更に失敗しました。'];
     }
 }
 
 
 // 商品を削除
-function delete_product($db,$product_id) {
+function delete_product($db, $product_id) {
     $image_paths = [];
 
     try {
@@ -422,7 +418,7 @@ function delete_product($db,$product_id) {
         if ($product === false) {
             $db->rollBack();
 
-             return ['','商品が見つかりません。'];
+            return ['', '商品が見つかりません。'];
         }
 
 
@@ -520,13 +516,12 @@ function delete_product($db,$product_id) {
             ) {
                 error_log(
                     '商品画像の削除に失敗しました: ' .
-                    $image_path
+                        $image_path
                 );
             }
         }
 
-        return ['商品を削除しました。',''];
-
+        return ['商品を削除しました。', ''];
     } catch (Throwable $e) {
 
         if ($db->inTransaction()) {
@@ -535,6 +530,6 @@ function delete_product($db,$product_id) {
 
         error_log($e->getMessage());
 
-        return ['','商品の削除に失敗しました。'];
+        return ['', '商品の削除に失敗しました。'];
     }
 }
