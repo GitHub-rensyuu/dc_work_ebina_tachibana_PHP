@@ -178,4 +178,4 @@ unset($_SESSION['admin_product_message_type']);
 
 $products = show_products($db);
 
-include_once __DIR__ . '/../../include/view/admin_products_view.php';
+include __DIR__ . '/../../include/view/admin_products_view.php';

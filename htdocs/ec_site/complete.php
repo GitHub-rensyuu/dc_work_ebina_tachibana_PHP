@@ -10,4 +10,4 @@ $purchase_items =
 
 unset($_SESSION['purchase_items']);
 
-include_once __DIR__ . '/../../include/view/complete_view.php';
+include __DIR__ . '/../../include/view/complete_view.php';

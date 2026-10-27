@@ -221,4 +221,4 @@ unset($_SESSION['cart_message']);
 unset($_SESSION['cart_message_type']);
 
 // View読み込み
-include_once __DIR__ . '/../../include/view/cart_view.php';
+include __DIR__ . '/../../include/view/cart_view.php';
